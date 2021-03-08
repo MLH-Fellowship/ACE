@@ -5,6 +5,12 @@ import { Stage, Layer } from 'react-konva';
 import Board from '../assets/chessBoard.png'
 import Piece from './piece'
 import piecemap from './piecemap'
+import useSound from 'use-sound'
+import chessMove from '../assets/moveSoundEffect.mp3'
+import { useParams } from 'react-router-dom'
+import { ColorContext } from '../../context/colorcontext' 
+const socket  = require('../../connection/socket').socket
+
 
 class ChessGame extends React.Component {
 
@@ -18,6 +24,20 @@ class ChessGame extends React.Component {
             whiteKingInCheck: false, 
             blackKingInCheck: false
         }
+    }
+
+    componentDidMount() {
+        console.log(this.props.myUserName)
+        console.log(this.props.opponentUserName)
+        // register event listeners
+        socket.on('opponent move', move => {
+            if (move.playerColorThatJustMovedIsWhite !== this.props.color) {
+                this.movePiece(move.selectedId, move.finalPosition, this.state.gameState, false)
+                this.setState({
+                    playerTurnToMoveIsWhite: !move.playerColorThatJustMovedIsWhite
+                })
+            }
+        })
     }
 
     startDragging = (e) => {
@@ -62,12 +82,25 @@ class ChessGame extends React.Component {
             this.revertToPreviousState(selectedId) 
             return
         } 
+
+
+        if (isMyMove) {
+            socket.emit('new move', {
+                nextPlayerColorToMove: !this.state.gameState.thisPlayersColorIsWhite,
+                playerColorThatJustMovedIsWhite: this.state.gameState.thisPlayersColorIsWhite,
+                selectedId: selectedId, 
+                finalPosition: finalPosition,
+                gameId: this.props.gameId
+            })
+        }
+
+        this.props.playAudio()
                 
         // sets the new game state. 
         this.setState({
             draggedPieceTargetId: "",
             gameState: currentGame,
-            playerTurnToMoveIsWhite: !this.state.playerTurnToMoveIsWhite,
+            playerTurnToMoveIsWhite: !this.props.color,
             whiteKingInCheck: whiteKingInCheck,
             blackKingInCheck: blackKingInCheck
         })
@@ -150,8 +183,8 @@ class ChessGame extends React.Component {
         /*
             Look at the current game state in the model and populate the UI accordingly
         */
-        
-        return (
+         return (
+        <React.Fragment>
         <div style = {{
             backgroundImage: `url(${Board})`,
             width: "720px",
@@ -173,7 +206,7 @@ class ChessGame extends React.Component {
                                                 onDragStart = {this.startDragging}
                                                 onDragEnd = {this.endDragging}
                                                 id = {square.getPieceIdOnThisSquare()}
-                                                thisPlayersColorIsWhite = {this.state.playerTurnToMoveIsWhite}
+                                                thisPlayersColorIsWhite = {this.props.color}
                                                 playerTurnToMoveIsWhite = {this.state.playerTurnToMoveIsWhite}
                                                 whiteKingInCheck = {this.state.whiteKingInCheck}
                                                 blackKingInCheck = {this.state.blackKingInCheck}
@@ -185,8 +218,117 @@ class ChessGame extends React.Component {
                     })}
                 </Layer>
             </Stage>
-        </div>)
+        </div>
+        </React.Fragment>)
     }
 }
 
-export default ChessGame
+
+const ChessGameWrapper = (props) => {
+    // get the gameId from the URL here and pass it to the chessGame component as a prop. 
+    const domainName = 'http://localhost:3000'
+    const color = React.useContext(ColorContext)
+    const { gameid } = useParams()
+    const [play] = useSound(chessMove);
+    const [opponentSocketId, setOpponentSocketId] = React.useState('')
+    const [opponentDidJoinTheGame, didJoinGame] = React.useState(false)
+    const [opponentUserName, setUserName] = React.useState('')
+    const [gameSessionDoesNotExist, doesntExist] = React.useState(false)
+
+    React.useEffect(() => {
+        socket.on("playerJoinedRoom", statusUpdate => {
+            console.log("A new player has joined the room! Username: " + statusUpdate.userName + ", Game id: " + statusUpdate.gameId + " Socket id: " + statusUpdate.mySocketId)
+            if (socket.id !== statusUpdate.mySocketId) {
+                setOpponentSocketId(statusUpdate.mySocketId)
+            }
+        })
+    
+        socket.on("status", statusUpdate => {
+            console.log(statusUpdate)
+            alert(statusUpdate)
+            if (statusUpdate === 'This game session does not exist.' || statusUpdate === 'There are already 2 people playing in this room.') {
+                doesntExist(true)
+            }
+        })
+        
+    
+        socket.on('start game', (opponentUserName) => {
+            console.log("START!")
+            if (opponentUserName !== props.myUserName) {
+                setUserName(opponentUserName)
+                didJoinGame(true) 
+            } else {
+                socket.emit('request username', gameid)
+            }
+        })
+    
+    
+        socket.on('give userName', (socketId) => {
+            if (socket.id !== socketId) {
+                console.log("give userName stage: " + props.myUserName)
+                socket.emit('recieved userName', {userName: props.myUserName, gameId: gameid})
+            }
+        })
+    
+        socket.on('get Opponent UserName', (data) => {
+            if (socket.id !== data.socketId) {
+                setUserName(data.userName)
+                console.log('data.socketId: data.socketId')
+                setOpponentSocketId(data.socketId)
+                didJoinGame(true) 
+            }
+        })
+    }, [])
+
+
+    return (
+      <React.Fragment>
+        {opponentDidJoinTheGame ? (
+          <div>
+            <h4> Opponent: {opponentUserName} </h4>
+            <div style={{ display: "flex" }}>
+              <ChessGame
+                playAudio={play}
+                gameId={gameid}
+                color={color.didRedirect}
+              />
+            </div>
+            <h4> You: {props.myUserName} </h4>
+          </div>
+        ) : gameSessionDoesNotExist ? (
+          <div>
+            <h1 style={{ textAlign: "center", marginTop: "200px" }}> :( </h1>
+          </div>
+        ) : (
+          <div>
+            <h1
+              style={{
+                textAlign: "center",
+                marginTop: String(window.innerHeight / 8) + "px",
+              }}
+            >
+              Hey <strong>{props.myUserName}</strong>, copy and paste the URL
+              below to send to your friend:
+            </h1>
+            <textarea
+              style={{ marginLeft: String((window.innerWidth / 2) - 290) + "px", marginTop: "30" + "px", width: "580px", height: "30px"}}
+              onFocus={(event) => {
+                  console.log('sd')
+                  event.target.select()
+              }}
+              value = {domainName + "/game/" + gameid}
+              type = "text">
+              </textarea>
+            <br></br>
+
+            <h1 style={{ textAlign: "center", marginTop: "100px" }}>
+              {" "}
+              Waiting for other opponent to join the game...{" "}
+            </h1>
+          </div>
+        )}
+      </React.Fragment>
+    );
+};
+
+export default ChessGameWrapper
