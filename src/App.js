@@ -1,10 +1,15 @@
 import React from 'react';
 import ChessGame from './chess/UI/chessgame';
 
+import StockFish from "./integrations/stockfish";
 function App() {
   return (
     <div className="check">
-      <ChessGame color={true} />
+      <StockFish>
+      {({ position, onDrop, game }) => (
+        <ChessGame game={game} color={true} position={position} onDrop={onDrop}/>
+      )}
+      </StockFish>
     </div>
   );
 }

@@ -32,10 +32,16 @@ class ChessGame extends React.Component {
          * This could also be an HTTP request and the "update" could be the server response.
          * (model is hosted on the server instead of the browser)
          */
+        // if(!isMyMove){
+        //     this.props.onDrop()
+        // }
+        console.log("ismymove",isMyMove)
         var whiteKingInCheck = false 
         var blackKingInCheck = false
         var blackCheckmated = false 
         var whiteCheckmated = false
+        console.log(this.props.onDrop)
+        console.log("selectedid",selectedId,"finalpos",finalPosition,"currgame",currentGame)
         const update = currentGame.movePiece(selectedId, finalPosition, isMyMove)
         
         if (update === "moved in the same position.") {
@@ -85,7 +91,12 @@ class ChessGame extends React.Component {
         const currentBoard = currentGame.getBoard()
         const finalPosition = this.inferCoord(e.target.x() + 90, e.target.y() + 90, currentBoard)
         const selectedId = this.state.draggedPieceTargetId
-        this.movePiece(selectedId, finalPosition, currentGame, true)
+        if(this.state.playerTurnToMoveIsWhite){
+            this.movePiece(selectedId, finalPosition, currentGame, true)
+        }else{
+            this.movePiece(selectedId, finalPosition, currentGame, false)
+        }
+        
     }
 
     revertToPreviousState = (selectedId) => {
