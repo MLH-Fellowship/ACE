@@ -17,8 +17,12 @@
     "use-image": "^1.0.7",
     "use-sound": "^1.0.2",
     "uuid": "^7.0.3",
-    "web-vitals": "^1.0.1"
+    "web-vitals": "^1.0.1",
+    "axios": "^0.21.1",
+    "universal-cookie": "^4.0.4",
+    "microsoft-cognitiveservices-speech-sdk": "^1.14.1"
   },
+  "proxy": "http://localhost:8000",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

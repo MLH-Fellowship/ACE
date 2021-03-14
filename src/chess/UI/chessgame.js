@@ -9,7 +9,8 @@ import useSound from 'use-sound'
 import chessMove from '../assets/moveSoundEffect.mp3'
 import { useParams } from 'react-router-dom'
 import { ColorContext } from '../../context/colorcontext' 
-const socket  = require('../../connection/socket').socket
+import SpeechHandler from '../../services/speech';
+const socket  = require('../../services/socket').socket
 
 
 class ChessGame extends React.Component {
@@ -27,6 +28,7 @@ class ChessGame extends React.Component {
     }
 
     componentDidMount() {
+       
         console.log(this.props.myUserName)
         console.log(this.props.opponentUserName)
         // register event listeners
@@ -52,6 +54,7 @@ class ChessGame extends React.Component {
          * This could also be an HTTP request and the "update" could be the server response.
          * (model is hosted on the server instead of the browser)
          */
+        console.log("movepiece",selectedId,finalPosition,currentGame)
         var whiteKingInCheck = false 
         var blackKingInCheck = false
         var blackCheckmated = false 
@@ -107,8 +110,14 @@ class ChessGame extends React.Component {
 
         if (blackCheckmated) {
             alert("WHITE WON BY CHECKMATE!")
+            //TODO: option to rematch- same url new game
+            //new game: back to link page
+            //code implementation in this.props.restart and this.props.newGame
         } else if (whiteCheckmated) {
             alert("BLACK WON BY CHECKMATE!")
+            //TODO: option to rematch- same url new game
+            //new game: back to link page
+            //code implementation in this.props.restart and this.props.newGame
         }
     }
 
@@ -278,8 +287,74 @@ const ChessGameWrapper = (props) => {
                 didJoinGame(true) 
             }
         })
+
+        initialize()
+        let isPressed = false; 
+            
+        document.body.onkeydown = async function (e) { 
+            if (!isPressed) {  
+                if(e.keyCode == 32){
+                    isPressed = true;
+                    SpeechHandler.hearThis((commandcode)=>{
+                        //This is the callback function that gets fired once the recognition stops and recognises the speech
+                        // Add logic here to perform different tasks
+                        console.log("receiving callback")
+                        console.log(commandcode);
+                        
+                        //example logic:
+                        // if(commandcode==1){
+                        //     speakPositions()
+                        // }
+                    })
+                    
+                }
+            } 
+        };
+        
+        document.body.onkeyup = function (e) {  
+            if(e.keyCode == 32){
+                isPressed = false;
+                SpeechHandler.stopHearing()
+                //call text to speech commands here if required, using SpeechHandler.speakThis(text to speak)
+            }
+        } 
     }, [])
 
+    const initialize=async ()=>{
+        await SpeechHandler.initializeSpeechToText()
+    }
+
+    const speakPositions=()=>{
+        //commputer speakes summary of board
+    }
+
+    const findChessPiece=(chesspiece)=>{
+        //computer speaks piece at the given square
+        //handle the case where button is clicked directly instead of speeh command
+    }
+
+    const makeMoveUsingVoice=()=>{
+        //make move command implementation, pass arguments to function if required
+        //peice should move on board
+        //handle the case where button is clicked directly instead of speeh command
+    }
+
+    const reapeatOpponentMove=()=>{
+        //computer repeats oponents last move
+        //save it as a peice of state if required
+    }
+
+    const resignGame=()=>{
+        //computer resigns the game and pops up for restart/new game
+    }
+
+    const restart=()=>{
+        //board should be refreshed
+    }
+
+    const newGame=()=>{
+        //back to link screen with new link generated using uuid
+    }
 
     return (
       <React.Fragment>
@@ -291,9 +366,23 @@ const ChessGameWrapper = (props) => {
                 playAudio={play}
                 gameId={gameid}
                 color={color.didRedirect}
+                restart={restart}
+                newGame={newGame}
               />
             </div>
             <h4> You: {props.myUserName} </h4>
+            <div class="interaction-btns">
+                <button onClick={()=>speakPositions()}>Speak positions</button>
+                <br/>
+                <button onClick={()=>findChessPiece("Please speak up a position on board")}>Find</button>
+                <br/>
+                <button onClick={()=>makeMoveUsingVoice()}>Move</button>
+                <br/>
+                <button onClick={()=>reapeatOpponentMove()}>Repeat oponent move</button>
+                <br/>
+                <button onClick={()=>resignGame()}>Resign the game</button>
+                <br/>
+            </div>
           </div>
         ) : gameSessionDoesNotExist ? (
           <div>

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-const socket  = require('../connection/socket').socket
+const socket  = require('../services/socket').socket
 
 /**
  * 'Join game' is where we actually join the game room. 
