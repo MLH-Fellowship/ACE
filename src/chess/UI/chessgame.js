@@ -23,15 +23,44 @@ class ChessGame extends React.Component {
             draggedPieceTargetId: "", // empty string means no piece is being dragged
             playerTurnToMoveIsWhite: true,
             whiteKingInCheck: false, 
-            blackKingInCheck: false
+            blackKingInCheck: false,
+            isPressed:false
         }
         this.speakPositions = this.speakPositions.bind(this)
     }
 
-    componentDidMount() {
+    handleKeyUp = (e) =>{
+        if(e.keyCode == 32){
+            this.setState({
+                isPressed:false
+            })
+            SpeechHandler.stopHearing()
+            //call text to speech commands here if required, using SpeechHandler.speakThis(text to speak)
+        }
+    }
 
-        console.log(this.props.myUserName)
-        console.log(this.props.opponentUserName)
+    handleKeyDown = (e) => {
+        if (!this.state.isPressed) {  
+            if(e.keyCode == 32){
+                this.setState({
+                    isPressed:true
+                })
+                SpeechHandler.hearThis((commandcode)=>{
+                    //This is the callback function that gets fired once the recognition stops and recognises the speech
+                    // Add logic here to perform different tasks
+                    console.log("receiving callback")
+                    console.log(commandcode);
+                    //example logic:
+                    // if(commandcode==1){
+                    //     this.speakPositions()
+                    // }
+                })
+                
+            }
+      } 
+    }
+
+    componentDidMount() {
         // register event listeners
         socket.on('opponent move', move => {
             if (move.playerColorThatJustMovedIsWhite !== this.props.color) {
@@ -43,38 +72,10 @@ class ChessGame extends React.Component {
         })
         this.speakPositions()
         this.initialize()
-        let isPressed = false; 
-        
-        document.body.onkeydown = async function (e) { 
-            if (!isPressed) {  
-                if(e.keyCode == 32){
-                    isPressed = true;
-                    SpeechHandler.hearThis((commandcode)=>{
-                        //This is the callback function that gets fired once the recognition stops and recognises the speech
-                        // Add logic here to perform different tasks
-                        console.log("receiving callback")
-                        console.log(commandcode);
-                        console.log(this.speakPositions)
-                        //example logic:
-                        if(commandcode==1){
-                            console.log('reached commandcode1')
-                            this.speakPositions()
-                            console.log('finished commandcode1')
-                        }
-                    })
-                    
-                }
-            } 
-        };
-        
-        document.body.onkeyup = function (e) {  
-            if(e.keyCode == 32){
-                isPressed = false;
-                SpeechHandler.stopHearing()
-                //call text to speech commands here if required, using SpeechHandler.speakThis(text to speak)
-            }
-        } 
 
+        //adding listeners for speech start and end
+        document.addEventListener("keydown", this.handleKeyDown);
+        document.addEventListener("keyup", this.handleKeyUp);
 
     }
 

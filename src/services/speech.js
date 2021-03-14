@@ -76,7 +76,6 @@ class SpeechHandler{
         const recognizer = new speechsdk.SpeechRecognizer(speechConfig, audioConfig);
 
         recognizer.recognizeOnceAsync(result => {
-            console.log("this gets called every time i click mic")
             let displayText;
             if (result.reason === ResultReason.RecognizedSpeech) {
                 displayText = `RECOGNIZED: Text=${result.text}`
@@ -84,7 +83,6 @@ class SpeechHandler{
                 displayText = 'ERROR: Speech was cancelled or could not be recognized. Ensure your microphone is working properly.';
             }
             console.log(displayText)
-            
             //write all commands as if else statements over here
             //some cleaning of data required
             if (displayText=="command thats required"){
