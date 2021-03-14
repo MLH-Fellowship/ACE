@@ -88,9 +88,9 @@ class SpeechHandler{
             //write all commands as if else statements over here
             //some cleaning of data required
             if (displayText=="command thats required"){
-                //after recoganizing command, callback with the correct command code
-                //the command code will be received in chessgame.js
-                //add/delete parameters in the callback function in chessgame.js if some data needs to be sent back
+                // after recoganizing command, callback with the correct command code
+                // the command code will be received in chessgame.js
+                // add/delete parameters in the callback function in chessgame.js if some data needs to be sent back
                 callback(1);
             }
         });

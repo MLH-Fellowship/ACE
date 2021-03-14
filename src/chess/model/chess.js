@@ -106,7 +106,7 @@ class Game {
             })
 
 
-         console.log(moveAttempt)
+         console.log("moveAttempt from chess.js:",moveAttempt)
         // console.log(isPromotion)
 
         if (moveAttempt === null) {
@@ -177,7 +177,7 @@ class Game {
             return this.chess.turn() + check
         }
 
-        console.log(currentBoard)
+        console.log("log currentBoard from chess.js", currentBoard)
         // update board
         this.setBoard(currentBoard)
     }
