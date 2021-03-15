@@ -23,14 +23,45 @@ class ChessGame extends React.Component {
             draggedPieceTargetId: "", // empty string means no piece is being dragged
             playerTurnToMoveIsWhite: true,
             whiteKingInCheck: false, 
-            blackKingInCheck: false
+            blackKingInCheck: false,
+            isPressed:false
+        }
+        this.speakPositions = this.speakPositions.bind(this)
+    }
+
+    handleKeyUp = (e) =>{
+        if(e.keyCode == 32){
+            this.setState({
+                isPressed:false
+            })
+            SpeechHandler.stopHearing()
+            //call text to speech commands here if required, using SpeechHandler.speakThis(text to speak)
         }
     }
 
+    handleKeyDown = (e) => {
+        if (!this.state.isPressed) {  
+            if(e.keyCode == 32){
+                this.setState({
+                    isPressed:true
+                })
+                SpeechHandler.hearThis((commandcode)=>{
+                    //This is the callback function that gets fired once the recognition stops and recognises the speech
+                    // Add logic here to perform different tasks
+                    console.log("receiving callback")
+                    console.log(commandcode);
+                    //example logic:
+                    if(commandcode==1){
+                        this.speakPositions()
+                    }
+
+                })
+                
+            }
+      } 
+    }
+
     componentDidMount() {
-       
-        console.log(this.props.myUserName)
-        console.log(this.props.opponentUserName)
         // register event listeners
         socket.on('opponent move', move => {
             if (move.playerColorThatJustMovedIsWhite !== this.props.color) {
@@ -40,6 +71,13 @@ class ChessGame extends React.Component {
                 })
             }
         })
+        //this.speakPositions()
+        this.initialize()
+
+        //adding listeners for speech start and end
+        document.addEventListener("keydown", this.handleKeyDown);
+        document.addEventListener("keyup", this.handleKeyUp);
+
     }
 
     startDragging = (e) => {
@@ -96,6 +134,10 @@ class ChessGame extends React.Component {
                 gameId: this.props.gameId
             })
         }
+        else
+        {
+            console.log("received move from opponent")
+        }
 
         this.props.playAudio()
                 
@@ -120,7 +162,6 @@ class ChessGame extends React.Component {
             //code implementation in this.props.restart and this.props.newGame
         }
     }
-
 
     endDragging = (e) => {
         const currentGame = this.state.gameState
@@ -187,6 +228,71 @@ class ChessGame extends React.Component {
 
         return hashmap[shortestDistance]
     }
+
+
+    initialize=async ()=>{
+        await SpeechHandler.initializeSpeechToText()
+        await SpeechHandler.initializeTextToSpeech()
+    }
+
+    speakPositions(){
+        //commputer speakes summary of board
+        let rank = []
+        let file = []
+        
+        if (this.props.color){
+            rank = ['8','7','6','5','4','3','2','1']
+            file = ['A','B','C','D','E','F','G','H']
+        }
+        else
+        {
+            rank = ['1','2','3','4','5','6','7','8']
+            file = ['H','G','F','E','D','C','B','A']
+        }
+
+        let position_to_speak = ""
+
+        for(let i=0; i<8; i++)
+        {
+            for(let j=0; j<8; j++)
+            {
+                if(!(this.state.gameState.chessBoard[i][j].pieceOnThisSquare === null))
+                position_to_speak = position_to_speak + file[j] + rank[i] + ' ' + this.state.gameState.chessBoard[i][j].pieceOnThisSquare.color + ' ' + this.state.gameState.chessBoard[i][j].pieceOnThisSquare.name + '\n'
+            }
+        }
+
+        SpeechHandler.speakThis(position_to_speak)
+        console.log("trigger speak position")
+        console.log(position_to_speak)
+    }
+
+    findChessPiece=(chesspiece)=>{
+        //computer speaks piece at the given square
+        //handle the case where button is clicked directly instead of speeh command
+    }
+
+    makeMoveUsingVoice=()=>{
+        //make move command implementation, pass arguments to function if required
+        //peice should move on board
+        //handle the case where button is clicked directly instead of speeh command
+    }
+
+    reapeatOpponentMove=()=>{
+        //computer repeats oponents last move
+        //save it as a peice of state if required
+    }
+
+    resignGame=()=>{
+        //computer resigns the game and pops up for restart/new game
+    }
+
+    restart=()=>{
+        //board should be refreshed
+    }
+
+    newGame=()=>{
+        //back to link screen with new link generated using uuid
+    }
    
     render() {
         /*
@@ -228,6 +334,18 @@ class ChessGame extends React.Component {
                 </Layer>
             </Stage>
         </div>
+        <div class="interaction-btns">
+                <button onClick={()=>this.speakPositions()}>Speak positions</button>
+                <br/>
+                <button onClick={()=>this.findChessPiece("Please speak up a position on board")}>Find</button>
+                <br/>
+                <button onClick={()=>this.makeMoveUsingVoice()}>Move</button>
+                <br/>
+                <button onClick={()=>this.reapeatOpponentMove()}>Repeat oponent move</button>
+                <br/>
+                <button onClick={()=>this.resignGame()}>Resign the game</button>
+                <br/>
+            </div>
         </React.Fragment>)
     }
 }
@@ -288,73 +406,41 @@ const ChessGameWrapper = (props) => {
             }
         })
 
-        initialize()
-        let isPressed = false; 
+        // initialize()
+        // let isPressed = false; 
             
-        document.body.onkeydown = async function (e) { 
-            if (!isPressed) {  
-                if(e.keyCode == 32){
-                    isPressed = true;
-                    SpeechHandler.hearThis((commandcode)=>{
-                        //This is the callback function that gets fired once the recognition stops and recognises the speech
-                        // Add logic here to perform different tasks
-                        console.log("receiving callback")
-                        console.log(commandcode);
+        // document.body.onkeydown = async function (e) { 
+        //     if (!isPressed) {  
+        //         if(e.keyCode == 32){
+        //             isPressed = true;
+        //             SpeechHandler.hearThis((commandcode)=>{
+        //                 //This is the callback function that gets fired once the recognition stops and recognises the speech
+        //                 // Add logic here to perform different tasks
+        //                 console.log("receiving callback")
+        //                 console.log(commandcode);
                         
-                        //example logic:
-                        // if(commandcode==1){
-                        //     speakPositions()
-                        // }
-                    })
+        //                 //example logic:
+        //                 // if(commandcode==1){
+        //                 //     speakPositions()
+        //                 // }
+        //             })
                     
-                }
-            } 
-        };
+        //         }
+        //     } 
+        // };
         
-        document.body.onkeyup = function (e) {  
-            if(e.keyCode == 32){
-                isPressed = false;
-                SpeechHandler.stopHearing()
-                //call text to speech commands here if required, using SpeechHandler.speakThis(text to speak)
-            }
-        } 
+        // document.body.onkeyup = function (e) {  
+        //     if(e.keyCode == 32){
+        //         isPressed = false;
+        //         SpeechHandler.stopHearing()
+        //         //call text to speech commands here if required, using SpeechHandler.speakThis(text to speak)
+        //     }
+        // } 
     }, [])
 
-    const initialize=async ()=>{
-        await SpeechHandler.initializeSpeechToText()
-    }
-
-    const speakPositions=()=>{
-        //commputer speakes summary of board
-    }
-
-    const findChessPiece=(chesspiece)=>{
-        //computer speaks piece at the given square
-        //handle the case where button is clicked directly instead of speeh command
-    }
-
-    const makeMoveUsingVoice=()=>{
-        //make move command implementation, pass arguments to function if required
-        //peice should move on board
-        //handle the case where button is clicked directly instead of speeh command
-    }
-
-    const reapeatOpponentMove=()=>{
-        //computer repeats oponents last move
-        //save it as a peice of state if required
-    }
-
-    const resignGame=()=>{
-        //computer resigns the game and pops up for restart/new game
-    }
-
-    const restart=()=>{
-        //board should be refreshed
-    }
-
-    const newGame=()=>{
-        //back to link screen with new link generated using uuid
-    }
+    // const initialize=async ()=>{
+    //     await SpeechHandler.initializeSpeechToText()
+    // }
 
     return (
       <React.Fragment>
@@ -366,23 +452,9 @@ const ChessGameWrapper = (props) => {
                 playAudio={play}
                 gameId={gameid}
                 color={color.didRedirect}
-                restart={restart}
-                newGame={newGame}
               />
             </div>
             <h4> You: {props.myUserName} </h4>
-            <div class="interaction-btns">
-                <button onClick={()=>speakPositions()}>Speak positions</button>
-                <br/>
-                <button onClick={()=>findChessPiece("Please speak up a position on board")}>Find</button>
-                <br/>
-                <button onClick={()=>makeMoveUsingVoice()}>Move</button>
-                <br/>
-                <button onClick={()=>reapeatOpponentMove()}>Repeat oponent move</button>
-                <br/>
-                <button onClick={()=>resignGame()}>Resign the game</button>
-                <br/>
-            </div>
           </div>
         ) : gameSessionDoesNotExist ? (
           <div>

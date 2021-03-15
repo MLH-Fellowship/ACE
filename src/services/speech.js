@@ -71,12 +71,19 @@ class SpeechHandler{
         }   
     }
 
+    static checkSpeakPosition(text){
+        text = text.toLowerCase()
+        if(text.search('speak')!=-1 && text.search('position')!=-1)
+            return true
+        else
+            return false
+    }
+
     static hearThis(callback){
         const audioConfig = speechsdk.AudioConfig.fromDefaultMicrophoneInput();
         const recognizer = new speechsdk.SpeechRecognizer(speechConfig, audioConfig);
 
         recognizer.recognizeOnceAsync(result => {
-            console.log("this gets called every time i click mic")
             let displayText;
             if (result.reason === ResultReason.RecognizedSpeech) {
                 displayText = `RECOGNIZED: Text=${result.text}`
@@ -84,13 +91,12 @@ class SpeechHandler{
                 displayText = 'ERROR: Speech was cancelled or could not be recognized. Ensure your microphone is working properly.';
             }
             console.log(displayText)
-            
             //write all commands as if else statements over here
             //some cleaning of data required
-            if (displayText=="command thats required"){
-                //after recoganizing command, callback with the correct command code
-                //the command code will be received in chessgame.js
-                //add/delete parameters in the callback function in chessgame.js if some data needs to be sent back
+            if (this.checkSpeakPosition(result.text)){
+                // after recoganizing command, callback with the correct command code
+                // the command code will be received in chessgame.js
+                // add/delete parameters in the callback function in chessgame.js if some data needs to be sent back
                 callback(1);
             }
         });
