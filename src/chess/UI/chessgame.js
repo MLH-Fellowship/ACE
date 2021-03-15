@@ -70,7 +70,7 @@ class ChessGame extends React.Component {
                 })
             }
         })
-        this.speakPositions()
+        //this.speakPositions()
         this.initialize()
 
         //adding listeners for speech start and end
@@ -231,13 +231,38 @@ class ChessGame extends React.Component {
 
     initialize=async ()=>{
         await SpeechHandler.initializeSpeechToText()
+        await SpeechHandler.initializeTextToSpeech()
     }
 
     speakPositions(){
         //commputer speakes summary of board
-        console.log("trigger speak position")
-        console.log(this.state.gameState)
+        let rank = []
+        let file = []
         
+        if (this.props.color){
+            rank = ['8','7','6','5','4','3','2','1']
+            file = ['a','b','c','d','e','f','g','h']
+        }
+        else
+        {
+            rank = ['1','2','3','4','5','6','7','8']
+            file = ['h','g','f','e','d','c','b','a']
+        }
+
+        let position_to_speak = ""
+
+        for(let i=0; i<8; i++)
+        {
+            for(let j=0; j<8; j++)
+            {
+                if(!(this.state.gameState.chessBoard[i][j].pieceOnThisSquare === null))
+                position_to_speak = position_to_speak + file[j] + rank[i] + ' ' + this.state.gameState.chessBoard[i][j].pieceOnThisSquare.color + ' ' + this.state.gameState.chessBoard[i][j].pieceOnThisSquare.name + '\n'
+            }
+        }
+
+        SpeechHandler.speakThis(position_to_speak)
+        console.log("trigger speak position")
+        console.log(position_to_speak)
     }
 
     findChessPiece=(chesspiece)=>{
