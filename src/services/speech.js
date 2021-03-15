@@ -71,6 +71,14 @@ class SpeechHandler{
         }   
     }
 
+    static checkSpeakPosition(text){
+        text = text.toLowerCase()
+        if(text.search('speak')!=-1 && text.search('position')!=-1)
+            return true
+        else
+            return false
+    }
+
     static hearThis(callback){
         const audioConfig = speechsdk.AudioConfig.fromDefaultMicrophoneInput();
         const recognizer = new speechsdk.SpeechRecognizer(speechConfig, audioConfig);
@@ -85,7 +93,7 @@ class SpeechHandler{
             console.log(displayText)
             //write all commands as if else statements over here
             //some cleaning of data required
-            if (displayText=="command thats required"){
+            if (this.checkSpeakPosition(result.text)){
                 // after recoganizing command, callback with the correct command code
                 // the command code will be received in chessgame.js
                 // add/delete parameters in the callback function in chessgame.js if some data needs to be sent back

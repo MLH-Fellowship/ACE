@@ -51,9 +51,10 @@ class ChessGame extends React.Component {
                     console.log("receiving callback")
                     console.log(commandcode);
                     //example logic:
-                    // if(commandcode==1){
-                    //     this.speakPositions()
-                    // }
+                    if(commandcode==1){
+                        this.speakPositions()
+                    }
+
                 })
                 
             }
@@ -241,12 +242,12 @@ class ChessGame extends React.Component {
         
         if (this.props.color){
             rank = ['8','7','6','5','4','3','2','1']
-            file = ['a','b','c','d','e','f','g','h']
+            file = ['A','B','C','D','E','F','G','H']
         }
         else
         {
             rank = ['1','2','3','4','5','6','7','8']
-            file = ['h','g','f','e','d','c','b','a']
+            file = ['H','G','F','E','D','C','B','A']
         }
 
         let position_to_speak = ""
