@@ -79,6 +79,49 @@ class SpeechHandler{
             return false
     }
 
+    static checkMove(text){
+        text = text.toLowerCase()
+        if(text.search('move')!=-1)
+            return true
+        else
+            return false
+    }
+
+    static checkIfSquare(text){
+        text = text.toLowerCase()
+
+        if(text.length==2)
+        {
+            if(text.charCodeAt(0)>=97 && text.charCodeAt(0)<=104 && text.charCodeAt(1)>=49 && text.charCodeAt(1)<=56)
+                return [true, text];
+            else
+                return [false];
+        }
+        else if(text.length==3 && text.endsWith('.'))
+        {
+            if(text.charCodeAt(0)>=97 && text.charCodeAt(0)<=104 && text.charCodeAt(1)>=49 && text.charCodeAt(1)<=56)
+                return [true, text[0]+text[1]];
+            else
+                return [false];
+        }
+        else if(text.length==3)
+        {
+            if(text.charCodeAt(0)>=97 && text.charCodeAt(0)<=104 && text.charCodeAt(2)>=49 && text.charCodeAt(2)<=56)
+                return [true, text[0]+text[2]];
+            else
+                return [false];
+        }
+        else if(text.length==4 && text.endsWith('.'))
+        {
+            if(text.charCodeAt(0)>=97 && text.charCodeAt(0)<=104 && text.charCodeAt(2)>=49 && text.charCodeAt(2)<=56)
+                return [true, text[0]+text[2]];
+            else
+                return false;
+        }
+        else
+            return [false]
+    }
+
     static hearThis(callback){
         const audioConfig = speechsdk.AudioConfig.fromDefaultMicrophoneInput();
         const recognizer = new speechsdk.SpeechRecognizer(speechConfig, audioConfig);
@@ -97,7 +140,14 @@ class SpeechHandler{
                 // after recoganizing command, callback with the correct command code
                 // the command code will be received in chessgame.js
                 // add/delete parameters in the callback function in chessgame.js if some data needs to be sent back
-                callback(1);
+                callback([1,result.text]);
+            }
+            else if(this.checkMove(result.text)){
+                callback([2,result.text]);
+            }
+            else if(this.checkIfSquare(result.text)[0]){
+                console.log(this.checkIfSquare(result.text)[1])
+                callback([3,this.checkIfSquare(result.text)[1]])
             }
         });
 
