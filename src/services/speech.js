@@ -86,6 +86,14 @@ class SpeechHandler{
         else
             return false
     }
+    
+    static findPiece(text){
+        text = text.toLowerCase()
+        if(text.search('find')!=-1)
+            return true
+        else
+            return false
+    }
 
     static checkIfSquare(text){
         text = text.toLowerCase()
@@ -137,7 +145,7 @@ class SpeechHandler{
             //write all commands as if else statements over here
             //some cleaning of data required
             if (this.checkSpeakPosition(result.text)){
-                // after recoganizing command, callback with the correct command code
+                // after recognizing command, callback with the correct command code
                 // the command code will be received in chessgame.js
                 // add/delete parameters in the callback function in chessgame.js if some data needs to be sent back
                 callback([1,result.text]);
@@ -148,6 +156,9 @@ class SpeechHandler{
             else if(this.checkIfSquare(result.text)[0]){
                 console.log(this.checkIfSquare(result.text)[1])
                 callback([3,this.checkIfSquare(result.text)[1]])
+            }
+            else if(this.findPiece(result.text)){
+                callback([4, result.text])
             }
         });
 

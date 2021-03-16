@@ -57,6 +57,9 @@ class ChessGame extends React.Component {
                     else if(commandcode[0]==2){
                         this.makeMoveUsingVoice()
                     }
+                    else if(commandcode[0] == 4){
+                        this.findChessPiece()
+                    }
                 })
                 
             }
