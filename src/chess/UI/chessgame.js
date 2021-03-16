@@ -24,7 +24,8 @@ class ChessGame extends React.Component {
             playerTurnToMoveIsWhite: true,
             whiteKingInCheck: false, 
             blackKingInCheck: false,
-            isPressed:false
+            isPressed: false,
+            latestOpponentMove: null
         }
         this.speakPositions = this.speakPositions.bind(this)
     }
@@ -57,6 +58,9 @@ class ChessGame extends React.Component {
                     else if(commandcode[0]==2){
                         this.makeMoveUsingVoice()
                     }
+                    else if(commandcode[0]==4){
+                        this.repeatOpponentMove()
+                    }
                 })
                 
             }
@@ -67,9 +71,30 @@ class ChessGame extends React.Component {
         // register event listeners
         socket.on('opponent move', move => {
             if (move.playerColorThatJustMovedIsWhite !== this.props.color) {
-                this.movePiece(move.selectedId, move.finalPosition, this.state.gameState, false)
+                console.log("opponents move is: ")
+                console.log(move)
+
+                let piece = ""
+
+                if(move.selectedId[1]==='p')
+                    piece = 'pawn'
+                else if(move.selectedId[1]==='n')
+                    piece = 'knight'
+                else if(move.selectedId[1]==='b')
+                    piece = 'bishop'
+                else if(move.selectedId[1]==='r')
+                    piece = 'rook'
+                else if(move.selectedId[1]==='q')
+                    piece = 'queen'
+                else if(move.selectedId[1]==='k')
+                    piece = 'king'
+                
+                let final_move = piece + " moved from " + move.from + " to " + move.to
+                console.log(final_move)
+                this.movePiece(move.selectedId, move.finalPosition, this.state.gameState, false, move.from, move.to)
                 this.setState({
-                    playerTurnToMoveIsWhite: !move.playerColorThatJustMovedIsWhite
+                    playerTurnToMoveIsWhite: !move.playerColorThatJustMovedIsWhite,
+                    latestOpponentMove: final_move
                 })
             }
         })
@@ -88,7 +113,7 @@ class ChessGame extends React.Component {
         })
     }
 
-    movePiece = (selectedId, finalPosition, currentGame, isMyMove) => {
+    movePiece = (selectedId, finalPosition, currentGame, isMyMove, from, to) => {
         /**
          * "update" is the connection between the model and the UI. 
          * This could also be an HTTP request and the "update" could be the server response.
@@ -135,7 +160,9 @@ class ChessGame extends React.Component {
                 playerColorThatJustMovedIsWhite: this.state.gameState.thisPlayersColorIsWhite,
                 selectedId: selectedId, 
                 finalPosition: finalPosition,
-                gameId: this.props.gameId
+                gameId: this.props.gameId,
+                from: from,
+                to: to
             })
         }
         else
@@ -162,9 +189,46 @@ class ChessGame extends React.Component {
         } else if (whiteCheckmated) {
             alert("BLACK WON BY CHECKMATE!")
             //TODO: option to rematch- same url new game
-            //new game: back to link page
-            //code implementation in this.props.restart and this.props.newGame
+            //new game: back to link paget
+            //code implementation in this.props.restar and this.props.newGame
         }
+    }
+
+    getActualCoordinates(rank, file){
+        if(this.props.color)
+        {
+            rank = 8 - rank
+            rank = rank.toString()
+            file = file + 97
+            file = String.fromCharCode(file)
+        }
+        else
+        {
+            rank = rank + 1
+            rank = rank.toString()
+            file = 7 - file
+            file = file + 97
+            file = String.fromCharCode(file)
+        }
+
+        return (file+rank)
+    }
+
+    getPositionFromId(searchId){
+        let rank = 0
+        let file = 0
+
+        for(let i=0;i<8;i++)
+        {
+            for(let j=0;j<8;j++)
+            {
+                if(this.state.gameState.chessBoard[i][j].pieceOnThisSquare!==null && this.state.gameState.chessBoard[i][j].pieceOnThisSquare.id === searchId){
+                    rank = i
+                    file = j
+                }
+            }
+        }
+        return [rank, file]
     }
 
     endDragging = (e) => {
@@ -172,7 +236,10 @@ class ChessGame extends React.Component {
         const currentBoard = currentGame.getBoard()
         const finalPosition = this.inferCoord(e.target.x() + 90, e.target.y() + 90, currentBoard)
         const selectedId = this.state.draggedPieceTargetId
-        this.movePiece(selectedId, finalPosition, currentGame, true)
+        const selectedIdPos = this.getPositionFromId(selectedId)
+        const from_pos = this.getActualCoordinates(selectedIdPos[0],selectedIdPos[1])
+        const to_pos = this.getActualCoordinates(finalPosition[1],finalPosition[2])
+        this.movePiece(selectedId, finalPosition[0], currentGame, true, from_pos, to_pos)
     }
 
     revertToPreviousState = (selectedId) => {
@@ -216,6 +283,8 @@ class ChessGame extends React.Component {
         */
         var hashmap = {}
         var shortestDistance = Infinity
+        var i_final = 0
+        var j_final = 0
         for (var i = 0; i < 8; i++) {
             for (var j = 0; j < 8; j++) {
                 const canvasCoord = chessBoard[i][j].getCanvasCoord()
@@ -226,11 +295,13 @@ class ChessGame extends React.Component {
                 hashmap[newDistance] = canvasCoord
                 if (newDistance < shortestDistance) {
                     shortestDistance = newDistance
+                    i_final = i
+                    j_final = j
                 }
             }
         }
 
-        return hashmap[shortestDistance]
+        return [hashmap[shortestDistance],i_final,j_final]
     }
 
 
@@ -261,7 +332,7 @@ class ChessGame extends React.Component {
             for(let j=0; j<8; j++)
             {
                 if(!(this.state.gameState.chessBoard[i][j].pieceOnThisSquare === null))
-                position_to_speak = position_to_speak + file[j] + rank[i] + ' ' + this.state.gameState.chessBoard[i][j].pieceOnThisSquare.color + ' ' + this.state.gameState.chessBoard[i][j].pieceOnThisSquare.name + '\n'
+                position_to_speak = position_to_speak + this.state.gameState.chessBoard[i][j].pieceOnThisSquare.color + ' ' + this.state.gameState.chessBoard[i][j].pieceOnThisSquare.name + "on" + file[j] + rank[i] + '\n'
             }
         }
 
@@ -326,16 +397,22 @@ class ChessGame extends React.Component {
                 const currentBoard = currentGame.getBoard()
                 const finalPosition = currentBoard[to_coords[0]][to_coords[1]].getCanvasCoord()
                 const selectedId = currentGame.chessBoard[from_coords[0]][from_coords[1]].pieceOnThisSquare.id
-                this.movePiece(selectedId, finalPosition, currentGame, true)
+                this.movePiece(selectedId, finalPosition, currentGame, true, from, to)
 
             })
 
         })       
     }
 
-    reapeatOpponentMove=()=>{
+    repeatOpponentMove=()=>{
         //computer repeats oponents last move
         //save it as a peice of state if required
+
+        if(this.state.latestOpponentMove===null)
+            SpeechHandler.speakThis("no moves have been made yet")
+        else
+            SpeechHandler.speakThis(this.state.latestOpponentMove)
+
     }
 
     resignGame=()=>{
@@ -397,7 +474,7 @@ class ChessGame extends React.Component {
                 <br/>
                 <button onClick={()=>this.makeMoveUsingVoice()}>Move</button>
                 <br/>
-                <button onClick={()=>this.reapeatOpponentMove()}>Repeat oponent move</button>
+                <button onClick={()=>this.repeatOpponentMove()}>Repeat oponent move</button>
                 <br/>
                 <button onClick={()=>this.resignGame()}>Resign the game</button>
                 <br/>
