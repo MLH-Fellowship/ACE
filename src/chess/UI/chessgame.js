@@ -51,10 +51,12 @@ class ChessGame extends React.Component {
                     console.log("receiving callback")
                     console.log(commandcode);
                     //example logic:
-                    if(commandcode==1){
+                    if(commandcode[0]==1){
                         this.speakPositions()
                     }
-
+                    else if(commandcode[0]==2){
+                        this.makeMoveUsingVoice()
+                    }
                 })
                 
             }
@@ -92,7 +94,9 @@ class ChessGame extends React.Component {
          * This could also be an HTTP request and the "update" could be the server response.
          * (model is hosted on the server instead of the browser)
          */
-        console.log("movepiece",selectedId,finalPosition,currentGame)
+        console.log("movepiece id:",selectedId)
+        console.log("movepiece final pos:",finalPosition)
+        console.log("movepiece currentgame:",currentGame)
         var whiteKingInCheck = false 
         var blackKingInCheck = false
         var blackCheckmated = false 
@@ -271,10 +275,62 @@ class ChessGame extends React.Component {
         //handle the case where button is clicked directly instead of speeh command
     }
 
-    makeMoveUsingVoice=()=>{
+    getBoardCoordinates(square){
+        let file = square.charCodeAt(0) - 97
+        let rank = square.charCodeAt(1) - 49
+
+        if(this.props.color)
+            rank = 7 - rank
+        else
+            file = 7 - file
+
+        console.log(rank,' ', file)
+        return [rank, file]
+    }
+
+    makeMoveUsingVoice=async ()=>{
         //make move command implementation, pass arguments to function if required
         //peice should move on board
         //handle the case where button is clicked directly instead of speeh command
+        let from=""
+        let to=""
+
+        SpeechHandler.speakThis("Which Square do you want to move from?")
+        
+        SpeechHandler.hearThis((commandcode)=>{
+            //This is the callback function that gets fired once the recognition stops and recognises the speech
+            // Add logic here to perform different tasks
+            console.log("receiving callback in make move from")
+            console.log(commandcode);
+            //example logic:
+            if(commandcode[0]==3){
+                from = commandcode[1]
+            }
+
+            SpeechHandler.speakThis("Which Square do you want to move to?")
+
+            SpeechHandler.hearThis((commandcode)=>{
+                //This is the callback function that gets fired once the recognition stops and recognises the speech
+                // Add logic here to perform different tasks
+                console.log("receiving callback in make move to")
+                console.log(commandcode);
+                //example logic:
+                if(commandcode[0]==3){
+                    to = commandcode[1]
+                }
+
+                let from_coords = this.getBoardCoordinates(from)
+                let to_coords = this.getBoardCoordinates(to)
+                
+                const currentGame = this.state.gameState
+                const currentBoard = currentGame.getBoard()
+                const finalPosition = currentBoard[to_coords[0]][to_coords[1]].getCanvasCoord()
+                const selectedId = currentGame.chessBoard[from_coords[0]][from_coords[1]].pieceOnThisSquare.id
+                this.movePiece(selectedId, finalPosition, currentGame, true)
+
+            })
+
+        })       
     }
 
     reapeatOpponentMove=()=>{
