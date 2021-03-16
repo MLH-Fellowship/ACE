@@ -7,10 +7,9 @@ const socket  = require('../services/socket').socket
  */
 
 
-const JoinGameRoom = (gameid, userName, isCreator) => {
+const JoinGameRoom = (gameid, isCreator) => {
     const idData = {
         gameId : gameid,
-        userName : userName,
         isCreator: isCreator
     }
     socket.emit("playerJoinGame", idData)
@@ -19,7 +18,7 @@ const JoinGameRoom = (gameid, userName, isCreator) => {
   
 const JoinGame = (props) => {
     const { gameid } = useParams()
-    JoinGameRoom(gameid, props.userName, props.isCreator)
+    JoinGameRoom(gameid, props.isCreator)
     return <div>
         <h1 style = {{textAlign: "center"}}>Welcome to ACE!</h1>
         <h3 style = {{textAlign: "center"}}>Your accesible chess experience</h3>

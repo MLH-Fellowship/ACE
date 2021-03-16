@@ -415,12 +415,11 @@ const ChessGameWrapper = (props) => {
     const [play] = useSound(chessMove);
     const [opponentSocketId, setOpponentSocketId] = React.useState('')
     const [opponentDidJoinTheGame, didJoinGame] = React.useState(false)
-    const [opponentUserName, setUserName] = React.useState('')
     const [gameSessionDoesNotExist, doesntExist] = React.useState(false)
 
     React.useEffect(() => {
         socket.on("playerJoinedRoom", statusUpdate => {
-            console.log("A new player has joined the room! Username: " + statusUpdate.userName + ", Game id: " + statusUpdate.gameId + " Socket id: " + statusUpdate.mySocketId)
+            console.log("A new player has joined the room! , Game id: " + statusUpdate.gameId + " Socket id: " + statusUpdate.mySocketId)
             if (socket.id !== statusUpdate.mySocketId) {
                 setOpponentSocketId(statusUpdate.mySocketId)
             }
@@ -435,74 +434,22 @@ const ChessGameWrapper = (props) => {
         })
         
     
-        socket.on('start game', (opponentUserName) => {
+        socket.on('start game', (idData) => {
             console.log("START!")
-            if (opponentUserName !== props.myUserName) {
-                setUserName(opponentUserName)
-                didJoinGame(true) 
-            } else {
-                socket.emit('request username', gameid)
-            }
+            didJoinGame(true)
         })
     
     
-        socket.on('give userName', (socketId) => {
-            if (socket.id !== socketId) {
-                console.log("give userName stage: " + props.myUserName)
-                socket.emit('recieved userName', {userName: props.myUserName, gameId: gameid})
-            }
-        })
-    
-        socket.on('get Opponent UserName', (data) => {
-            if (socket.id !== data.socketId) {
-                setUserName(data.userName)
-                console.log('data.socketId: data.socketId')
-                setOpponentSocketId(data.socketId)
-                didJoinGame(true) 
-            }
-        })
-
-        // initialize()
-        // let isPressed = false; 
-            
-        // document.body.onkeydown = async function (e) { 
-        //     if (!isPressed) {  
-        //         if(e.keyCode == 32){
-        //             isPressed = true;
-        //             SpeechHandler.hearThis((commandcode)=>{
-        //                 //This is the callback function that gets fired once the recognition stops and recognises the speech
-        //                 // Add logic here to perform different tasks
-        //                 console.log("receiving callback")
-        //                 console.log(commandcode);
-                        
-        //                 //example logic:
-        //                 // if(commandcode==1){
-        //                 //     speakPositions()
-        //                 // }
-        //             })
-                    
-        //         }
-        //     } 
-        // };
         
-        // document.body.onkeyup = function (e) {  
-        //     if(e.keyCode == 32){
-        //         isPressed = false;
-        //         SpeechHandler.stopHearing()
-        //         //call text to speech commands here if required, using SpeechHandler.speakThis(text to speak)
-        //     }
-        // } 
     }, [])
 
-    // const initialize=async ()=>{
-    //     await SpeechHandler.initializeSpeechToText()
-    // }
+
 
     return (
       <React.Fragment>
         {opponentDidJoinTheGame ? (
           <div>
-            <h4> Opponent: {opponentUserName} </h4>
+            <h4> Opponent  </h4>
             <div style={{ display: "flex" }}>
               <ChessGame
                 playAudio={play}
@@ -510,7 +457,7 @@ const ChessGameWrapper = (props) => {
                 color={color.didRedirect}
               />
             </div>
-            <h4> You: {props.myUserName} </h4>
+            <h4> You  </h4>
           </div>
         ) : gameSessionDoesNotExist ? (
           <div>
@@ -524,7 +471,7 @@ const ChessGameWrapper = (props) => {
                 marginTop: String(window.innerHeight / 8) + "px",
               }}
             >
-              Hey <strong>{props.myUserName}</strong>, copy and paste the URL
+              Hey, copy and paste the URL
               below to send to your friend:
             </h1>
             <textarea

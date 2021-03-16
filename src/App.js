@@ -19,20 +19,19 @@ function App() {
     setDidRedirect(false)
   }, [])
 
-  const [userName, setUserName] = React.useState('')
 
   return (
     <ColorContext.Provider value = {{didRedirect: didRedirect, playerDidRedirect: playerDidRedirect, playerDidNotRedirect: playerDidNotRedirect}}>
       <Router>
         <Switch>
           <Route path = "/" exact>
-            <Onboard setUserName = {setUserName}/>
+            <Onboard/>
           </Route>
           <Route path = "/game/:gameid" exact>
             {didRedirect ? 
               <React.Fragment>
-                    <JoinGame userName = {userName} isCreator = {true} />
-                    <ChessGame myUserName = {userName} />
+                    <JoinGame isCreator = {true} />
+                    <ChessGame />
               </React.Fragment> 
               :
               <JoinRoom />}
