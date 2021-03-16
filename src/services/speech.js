@@ -87,6 +87,14 @@ class SpeechHandler{
             return false
     }
 
+    static checkRepeatOppMove(text){
+        text = text.toLowerCase()
+        if(text.search('repeat')!=-1 && text.search('opponent')!=-1 && text.search('move')!=-1)
+            return true
+        else
+            return false
+    }
+
     static checkIfSquare(text){
         text = text.toLowerCase()
 
@@ -141,6 +149,9 @@ class SpeechHandler{
                 // the command code will be received in chessgame.js
                 // add/delete parameters in the callback function in chessgame.js if some data needs to be sent back
                 callback([1,result.text]);
+            }
+            else if(this.checkRepeatOppMove(result.text)){
+                callback([4, result.text]);
             }
             else if(this.checkMove(result.text)){
                 callback([2,result.text]);
