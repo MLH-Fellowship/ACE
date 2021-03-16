@@ -95,6 +95,12 @@ class SpeechHandler{
             return false
     }
 
+    static lastMove(text){
+        text = text.toLowerCase()
+        if(text.search('repeat') != -1) return true
+        else return false
+    }
+
     static checkIfSquare(text){
         text = text.toLowerCase()
 
@@ -159,6 +165,12 @@ class SpeechHandler{
             }
             else if(this.findPiece(result.text)){
                 callback([4, result.text])
+            }
+            else if(this.lastMove(result.text)){
+                callback([5, result.text])
+            }
+            else{
+                SpeechHandler.speakThis("Sorry, could not understand that. Please try again.")
             }
         });
 
