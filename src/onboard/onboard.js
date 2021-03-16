@@ -78,7 +78,7 @@ class CreateNewGame extends React.Component {
                             onClick = {() => {
                                 this.props.didRedirect() 
                                 this.setState({
-                                    didGetUserName: true
+                                    didGameStart: true
                                 })
                                 this.send()
                             }}>Start Game
