@@ -171,7 +171,7 @@ class ChessGame extends React.Component {
         } 
 
 
-        if (isMyMove) {
+        if (this.state.isMyMove) {
             socket.emit('new move', {
                 nextPlayerColorToMove: !this.state.gameState.thisPlayersColorIsWhite,
                 playerColorThatJustMovedIsWhite: this.state.gameState.thisPlayersColorIsWhite,
@@ -182,7 +182,7 @@ class ChessGame extends React.Component {
                 to: to
             })
         }
-        else
+        else if(!this.state.isMyMove)
         {
             console.log("received move from opponent")
         }
@@ -381,7 +381,7 @@ class ChessGame extends React.Component {
         //peice should move on board
         //handle the case where button is clicked directly instead of speeh command
         
-        if(this.state.isMyMove){
+        if((this.state.playerTurnToMoveIsWhite == this.props.color) || (!this.state.playerTurnToMoveIsWhite == !this.props.color)){
             
             let from=""
             let to=""

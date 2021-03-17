@@ -95,6 +95,14 @@ class SpeechHandler{
             return false
     }
 
+    static checkResign(text){
+        text = text.toLowerCase()
+        if(text.search('resign') != -1)
+            return true
+        else
+            return false
+    }
+
     static checkIfSquare(text){
         text = text.toLowerCase()
 
@@ -160,6 +168,9 @@ class SpeechHandler{
             else if(this.checkIfSquare(result.text)[0]){
                 console.log(this.checkIfSquare(result.text)[1])
                 callback([3,this.checkIfSquare(result.text)[1]])
+            }
+            else if(this.checkResign(result.text)){
+                callback([4, result.text])
             }
             else{
                 callback([-2,result.text]);
