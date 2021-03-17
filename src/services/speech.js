@@ -87,6 +87,14 @@ class SpeechHandler{
             return false
     }
 
+    static findPiece(text){
+        text = text.toLowerCase()
+        if(text.search('find')!=-1)
+            return true
+        else
+            return false
+    }
+
     static checkRepeatOppMove(text){
         text = text.toLowerCase()
         if(text.search('repeat')!=-1 && text.search('opponent')!=-1 && text.search('move')!=-1)
@@ -171,6 +179,9 @@ class SpeechHandler{
             }
             else if(this.checkResign(result.text)){
                 callback([4, result.text])
+            }
+            else if(this.findPiece(result.text)){
+                callback([5, result.text])
             }
             else{
                 callback([-2,result.text]);

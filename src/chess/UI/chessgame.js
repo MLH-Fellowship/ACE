@@ -61,6 +61,9 @@ class ChessGame extends React.Component {
                     else if(commandcode[0]==4){
                         this.repeatOpponentMove()
                     }
+                    else if(commandcode[0] == 5){
+                        this.findChessPiece()
+                    }
                     else if(commandcode[0]==-1){
                         SpeechHandler.speakThis('I\'m sorry I did not get that, please repeat your command')
                     }
@@ -358,9 +361,25 @@ class ChessGame extends React.Component {
         console.log(position_to_speak)
     }
 
-    findChessPiece=(chesspiece)=>{
+    findChessPiece= async ()=> {
         //computer speaks piece at the given square
         //handle the case where button is clicked directly instead of speeh command
+
+        // Define sq
+        let sq = ""
+        // Ask user for square
+        SpeechHandler.speakThis("Which square would you like to check?")
+        SpeechHandler.hearThis((commandcode)=>{
+            console.log("Receiving callback in find piece")
+            console.log(commandcode);
+            if(commandcode[0] == 3){
+                sq = commandcode[1]
+            }
+            let cords = this.getBoardCoordinates(sq)
+            const currentGame = this.state.gameState
+            const selectedId = currentGame.chessBoard[cords[0]][cords[1]].pieceOnThisSquare.color + " " + currentGame.chessBoard[cords[0]][cords[1]].pieceOnThisSquare.name
+            SpeechHandler.speakThis(selectedId)
+        })
     }
 
     getBoardCoordinates(square){
