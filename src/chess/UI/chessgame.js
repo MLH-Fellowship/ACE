@@ -104,6 +104,17 @@ class ChessGame extends React.Component {
                 })
             }
         })
+
+        socket.on('resign game',playerColor => {
+            if(playerColor==this.props.color){
+                alert("You resigned the game")
+                //Here, take input of new game or rematch and call this.newgame or this.rematch
+            }else{
+                alert("Opponent resigned the game")
+                 //Here, take input of new game or rematch and call this.newgame or this.rematch
+            }
+        })
+
         //this.speakPositions()
         this.initialize()
 
@@ -423,6 +434,7 @@ class ChessGame extends React.Component {
 
     resignGame=()=>{
         //computer resigns the game and pops up for restart/new game
+        socket.emit('resign',{gameId:this.props.gameId,playerColor:this.props.color})
     }
 
     restart=()=>{
