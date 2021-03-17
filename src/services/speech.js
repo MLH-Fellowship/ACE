@@ -140,6 +140,7 @@ class SpeechHandler{
                 displayText = `RECOGNIZED: Text=${result.text}`
             } else {
                 displayText = 'ERROR: Speech was cancelled or could not be recognized. Ensure your microphone is working properly.';
+                callback([-1,result.text]);
             }
             console.log(displayText)
             //write all commands as if else statements over here
@@ -159,6 +160,9 @@ class SpeechHandler{
             else if(this.checkIfSquare(result.text)[0]){
                 console.log(this.checkIfSquare(result.text)[1])
                 callback([3,this.checkIfSquare(result.text)[1]])
+            }
+            else{
+                callback([-2,result.text]);
             }
         });
 
