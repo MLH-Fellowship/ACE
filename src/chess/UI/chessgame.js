@@ -380,45 +380,52 @@ class ChessGame extends React.Component {
         //make move command implementation, pass arguments to function if required
         //peice should move on board
         //handle the case where button is clicked directly instead of speeh command
-        let from=""
-        let to=""
-
-        SpeechHandler.speakThis("Which Square do you want to move from?")
         
-        SpeechHandler.hearThis((commandcode)=>{
-            //This is the callback function that gets fired once the recognition stops and recognises the speech
-            // Add logic here to perform different tasks
-            console.log("receiving callback in make move from")
-            console.log(commandcode);
-            //example logic:
-            if(commandcode[0]==3){
-                from = commandcode[1]
-            }
-
-            SpeechHandler.speakThis("Which Square do you want to move to?")
-
+        if(this.state.isMyMove){
+            
+            let from=""
+            let to=""
+            
+            SpeechHandler.speakThis("Which Square do you want to move from?")
+            
             SpeechHandler.hearThis((commandcode)=>{
                 //This is the callback function that gets fired once the recognition stops and recognises the speech
                 // Add logic here to perform different tasks
-                console.log("receiving callback in make move to")
+                console.log("receiving callback in make move from")
                 console.log(commandcode);
                 //example logic:
                 if(commandcode[0]==3){
-                    to = commandcode[1]
+                    from = commandcode[1]
                 }
 
-                let from_coords = this.getBoardCoordinates(from)
-                let to_coords = this.getBoardCoordinates(to)
-                
-                const currentGame = this.state.gameState
-                const currentBoard = currentGame.getBoard()
-                const finalPosition = currentBoard[to_coords[0]][to_coords[1]].getCanvasCoord()
-                const selectedId = currentGame.chessBoard[from_coords[0]][from_coords[1]].pieceOnThisSquare.id
-                this.movePiece(selectedId, finalPosition, currentGame, true, from, to)
+                SpeechHandler.speakThis("Which Square do you want to move to?")
+
+                SpeechHandler.hearThis((commandcode)=>{
+                    //This is the callback function that gets fired once the recognition stops and recognises the speech
+                    // Add logic here to perform different tasks
+                    console.log("receiving callback in make move to")
+                    console.log(commandcode);
+                    //example logic:
+                    if(commandcode[0]==3){
+                        to = commandcode[1]
+                    }
+
+                    let from_coords = this.getBoardCoordinates(from)
+                    let to_coords = this.getBoardCoordinates(to)
+                    
+                    const currentGame = this.state.gameState
+                    const currentBoard = currentGame.getBoard()
+                    const finalPosition = currentBoard[to_coords[0]][to_coords[1]].getCanvasCoord()
+                    const selectedId = currentGame.chessBoard[from_coords[0]][from_coords[1]].pieceOnThisSquare.id
+                    this.movePiece(selectedId, finalPosition, currentGame, true, from, to)
+
+                })
 
             })
-
-        })       
+        }
+        else{
+            SpeechHandler.speakThis("Not your move.")
+        }
     }
 
     repeatOpponentMove=()=>{
