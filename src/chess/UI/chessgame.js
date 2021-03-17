@@ -61,6 +61,12 @@ class ChessGame extends React.Component {
                     else if(commandcode[0]==4){
                         this.repeatOpponentMove()
                     }
+                    else if(commandcode[0]==-1){
+                        SpeechHandler.speakThis('I\'m sorry I did not get that, please repeat your command')
+                    }
+                    else if(commandcode[0]==-2){
+                        SpeechHandler.speakThis('I\'m sorry that is not a command, please repeat your command')
+                    }
                 })
                 
             }
