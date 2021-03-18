@@ -54,6 +54,9 @@ class SpeechHandler{
     }
 
     static async speakThis(textToSpeak){
+        if(!synth){
+            await window.speechSynthesis;
+        }
         if(voices && voices.length && voices.length>0){
             var toSpeak = await new SpeechSynthesisUtterance(textToSpeak);
             toSpeak.voice=voices[0]

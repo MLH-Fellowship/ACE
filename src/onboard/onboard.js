@@ -22,7 +22,22 @@ class CreateNewGame extends React.Component {
         super(props);
         this.textArea = React.createRef();
     }
+
+    componentDidMount(){
+        document.addEventListener("keydown", this.startGame);
+    }
+
+    componentWillUnmount(){
+        document.removeEventListener("keydown", this.startGame);
+    }
     
+    startGame = (e) =>{
+        if(e.keyCode == 13){
+            document.getElementById("startGame").click()
+            //call text to speech commands here if required, using SpeechHandler.speakThis(text to speak)
+        }
+    }
+
     send = () => {
         const newGameRoomId = uuid()
 
@@ -44,7 +59,7 @@ class CreateNewGame extends React.Component {
                 <Redirect to = {"/game/" + this.state.gameId}><button className="btn btn-success" style = {{marginLeft: String((window.innerWidth / 2) - 60) + "px", width: "120px"}}>Start Game</button></Redirect>
 
             :
-            <div className="onboard" style={{height:'100vh',display:'flex',justifyContent:'center'}}>
+            <div id="onboard" className="onboard" style={{height:'100vh',display:'flex',justifyContent:'center'}}>
             <div style={{width:"50%",height:'100vh',display:'flex',flexDirection:'column',justifyContent:'center',fontSize:'22px'}}>
                 <div style={{textAlign:'center'}}>
                 <h1 style={{margin:0}}>ACE</h1>
@@ -54,7 +69,7 @@ class CreateNewGame extends React.Component {
                     <img src={ACE} height="300px" width="300px"></img>
                     </div>
                         <div style={{textAlign:'center'}}>
-                            <button className="btn btn-primary"  
+                            <button id="startGame" className="btn btn-primary"  
                                 onClick = {() => {
                                     this.props.didRedirect() 
                                     this.setState({
