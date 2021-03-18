@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router-dom'
 const socket  = require('../services/socket').socket
 
 /**
@@ -19,10 +19,13 @@ const JoinGameRoom = (gameid, isCreator) => {
 const JoinGame = (props) => {
     const { gameid } = useParams()
     JoinGameRoom(gameid, props.isCreator)
-    return <div>
-        <h1 style = {{textAlign: "center"}}>Welcome to ACE!</h1>
-        <h3 style = {{textAlign: "center"}}>Your accesible chess experience</h3>
-    </div>
+    return(
+        <header className='navbar'>
+            <div className='navbar__title navbar__item'>ACE</div>
+            <div className='navbar__item'><a href="/">Exit Game</a></div>  
+            <div className='navbar__item'><i class="fab fa-github"></i><a href="https://google.com"> Visit Github</a></div>     
+        </header>
+    )
 }
 
 export default JoinGame

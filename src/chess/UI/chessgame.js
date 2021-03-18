@@ -10,6 +10,7 @@ import chessMove from '../assets/moveSoundEffect.mp3'
 import { useParams } from 'react-router-dom'
 import { ColorContext } from '../../context/colorcontext' 
 import SpeechHandler from '../../services/speech';
+import Waiting from '../assets/waiting.png'
 const socket  = require('../../services/socket').socket
 
 
@@ -510,6 +511,7 @@ class ChessGame extends React.Component {
         */
          return (
         <React.Fragment>
+             <div  className="chessDiv">
         <div style = {{
             backgroundImage: `url(${Board})`,
             width: "720px",
@@ -544,16 +546,17 @@ class ChessGame extends React.Component {
                 </Layer>
             </Stage>
         </div>
+        </div>
         <div class="interaction-btns">
-                <button onClick={()=>this.speakPositions()}>Speak positions</button>
+                <button className="btn btn-primary" onClick={()=>this.speakPositions()}>Speak positions</button>
                 <br/>
-                <button onClick={()=>this.findChessPiece("Please speak up a position on board")}>Find</button>
+                <button className="btn btn-primary" onClick={()=>this.findChessPiece("Please speak up a position on board")}>Find</button>
                 <br/>
-                <button onClick={()=>this.makeMoveUsingVoice()}>Move</button>
+                <button className="btn btn-primary" onClick={()=>this.makeMoveUsingVoice()}>Move</button>
                 <br/>
-                <button onClick={()=>this.repeatOpponentMove()}>Repeat oponent move</button>
+                <button className="btn btn-primary" onClick={()=>this.repeatOpponentMove()}>Repeat oponent move</button>
                 <br/>
-                <button onClick={()=>this.resignGame()}>Resign the game</button>
+                <button className="btn btn-primary" onClick={()=>this.resignGame()}>Resign the game</button>
                 <br/>
             </div>
         </React.Fragment>)
@@ -571,7 +574,12 @@ const ChessGameWrapper = (props) => {
     const [opponentDidJoinTheGame, didJoinGame] = React.useState(false)
     const [gameSessionDoesNotExist, doesntExist] = React.useState(false)
 
+    const initialize= async ()=>{
+        await SpeechHandler.initializeTextToSpeech();
+    }
+
     React.useEffect(() => {
+        initialize();
         socket.on("playerJoinedRoom", statusUpdate => {
             console.log("A new player has joined the room! , Game id: " + statusUpdate.gameId + " Socket id: " + statusUpdate.mySocketId)
             if (socket.id !== statusUpdate.mySocketId) {
@@ -592,54 +600,104 @@ const ChessGameWrapper = (props) => {
             console.log("START!")
             didJoinGame(true)
         })
-    
+        
+        const key = document.querySelector('.key')
+        const keyText = key.innerText
+        const copy = document.querySelector('.copy')
+        const copied = document.querySelector('.copied')
+
+
+        // Show "copy" icon on hover with helper class.
+        key.addEventListener('mouseover', () => copy.classList.remove('hide'))
+        key.addEventListener('mouseleave', () => copy.classList.add('hide'))
+
+
+        // Copy text when clicking on it.
+        key.addEventListener('click', () => {
+            // We change "copy" icon for "copied" message.
+            copy.classList.add('hide')
+            copied.classList.remove('hide')
+            
+            // We turn simple text into an input value temporarily, so we can use methods .select() and .execCommand() which are compatible with inputs and textareas.
+            let helperInput = document.createElement('input')
+            document.body.appendChild(helperInput)
+            helperInput.value = keyText
+            helperInput.select()
+            document.execCommand('copy')
+            document.body.removeChild(helperInput)
+            SpeechHandler.speakThis("Game code has been copied on your clipboard! Press enter if you want to copy it again")
+            
+            // We remove the "copied" message after 2 seconds.
+            setTimeout( () => {
+                copied.classList.add('hide')
+            }, 2000)
+            
+        })
+        document.addEventListener("keydown", copyCode);
+        key.click();
+       
+
     
         
     }, [])
 
+    const copyCode = (e) =>{
+        if(e.keyCode == 13){
+            const key = document.querySelector('.key')
+            key.click()
+        }
+    }
 
 
     return (
       <React.Fragment>
         {opponentDidJoinTheGame ? (
-          <div>
-            <h4> Opponent  </h4>
-            <div style={{ display: "flex" }}>
+          <div className="outer">
+          <div >
+           
+            <div style={{ display: "flex" , justifyContent: "space-evenly"}}>
+                <div className="classification" style={{ display: "flex" , justifyContent: "space-between", flexDirection:"column",height:"80vh"}}>
+                 <h4> Opponent  </h4>
+                  <h4> You  </h4>
+                </div>
               <ChessGame
                 playAudio={play}
                 gameId={gameid}
                 color={color.didRedirect}
               />
             </div>
-            <h4> You  </h4>
+            </div>
           </div>
         ) : gameSessionDoesNotExist ? (
           <div>
             <h1 style={{ textAlign: "center", marginTop: "200px" }}> :( </h1>
           </div>
         ) : (
-          <div>
+          <div className="inviteScreen" id="invite">
+            <div style={{height:"10vh"}}></div>
             <h1
               style={{
                 textAlign: "center",
-                marginTop: String(window.innerHeight / 8) + "px",
+                marginBottom:"40px"
               }}
             >
               Hey, copy and paste the URL
               below to send to your friend:
             </h1>
-            <textarea
-              style={{ marginLeft: String((window.innerWidth / 2) - 290) + "px", marginTop: "30" + "px", width: "580px", height: "30px"}}
-              onFocus={(event) => {
-                  console.log('sd')
-                  event.target.select()
-              }}
-              value = {domainName + "/game/" + gameid}
-              type = "text">
-              </textarea>
-            <br></br>
-
-            <h1 style={{ textAlign: "center", marginTop: "100px" }}>
+            <p class="small" style={{textAlign:"center"}}>(Click on text to copy it)</p>
+                <p style={{textAlign:"center", marginLeft:"85px"}}>
+                    <strong>Room Code: </strong>
+                    <span class="key">{domainName + "/game/" + gameid}</span>
+                    <i class="copy hide far fa-copy"></i>
+                    <span class="copied hide">
+                        <i class="fas fa-check"></i> <small>Copied!</small>
+                    </span>
+                </p>
+              <br/>
+              <div style={{textAlign:"center"}}>
+            <img src={Waiting} height="200px" width="200px"/>
+            </div>
+            <h1 style={{ textAlign: "center", marginTop: "10px" }}>
               {" "}
               Waiting for other opponent to join the game...{" "}
             </h1>

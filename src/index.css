@@ -1,8 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Quicksand', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -10,4 +9,147 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+:root{
+	--grey:#999;
+	--lightgrey:#ddd;
+	--success:#52b788;
+}
+
+.btn{
+  outline:none;
+  border:none;
+  cursor:pointer;
+  display:block;
+  position:relative;
+  background-color:#D28C45;
+  font-size:16px;
+  font-weight:300px;
+  color:white;
+  text-transform:uppercase;
+  padding: 17px 60px;
+  margin:0 auto;
+  border-radius:20px;
+  box-shadow:0 6px #FFCF9F;
+}
+
+.btn-primary{
+  padding:10px;
+  min-width: 220px;
+}
+
+.btn:hover{
+  top:2px;
+  box-shadow:0 4px #FFCF9F;
+}
+.btn:active{
+  top:6px;
+  box-shadow:0 0px #FFCF9F;
+}
+
+.onboard{
+  background-color: #edeef7;
+  background-image: url('./chess/assets/Fade-In-Background.svg');
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  
+  background: black;
+  color: white;
+  font-family: Helvetica;
+  font-weight: 300;
+}
+
+.navbar__title {
+  margin-right: auto;
+  font-size: 150%;
+  padding: 12px 16px;
+}
+
+.navbar__item {
+  padding: 16px 16px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+
+.chessDiv{
+  -webkit-transform: scale(0.7);
+   -moz-transform: scale(0.7);
+   -o-transform: scale(0.7);
+   transform: scale(0.7);
+   -webkit-transform-origin:left top;
+   -moz-transform-origin:left top;
+
+   outline: 1px solid transparent;
+}
+
+.small{
+	font-size:10px;
+	color:var(--grey);
+}
+
+p{
+	font-size:20px;
+	position:relative;
+}
+p .key{
+	padding:0 16px;
+}
+p .key:hover{
+	cursor:pointer;
+}
+
+.copy, .copied{
+	transition: ease .3s;
+	font-size:20px;
+	line-height:30px;
+}
+.copy{
+	color:var(--grey);
+}
+.copied{
+	width: fit-content;
+	color:var(--success);
+}
+
+.outer{
+  padding:5px;
+  background-image: url('./chess/assets/Fade-In-Background.svg');
+}
+
+.hide{opacity:0;}
+
+input{
+	font-size:20px;
+	width:300px;
+	padding:10px 14px;
+	border-radius:8px;
+	background-color:var(--lightgrey);
+	border-style:none;
+	margin-top:30px;
+}
+
+.interaction-btns{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.inviteScreen{
+  background-image: url('./chess/assets/Fade-In-Background.svg');
+  height: 90vh;
+}
+
+.inviteScreen h1{
+  margin-top:0;
+}
+
+header a{
+  text-decoration: none;
+  color:inherit;
 }
