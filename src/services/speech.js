@@ -95,6 +95,30 @@ class SpeechHandler{
             return false
     }
 
+    static findPiece(text){
+        text = text.toLowerCase()
+        if(text.search('find')!=-1)
+            return true
+        else
+            return false
+    }
+
+    static checkConfirm(text){
+        text = text.toLowerCase()
+        if(text.search('confirm')!=-1)
+            return true
+        else
+            return false
+    }
+
+    static checkResign(text){
+        text = text.toLowerCase()
+        if(text.search('resign') != -1)
+            return true
+        else
+            return false
+    }
+
     static checkIfSquare(text){
         text = text.toLowerCase()
 
@@ -151,15 +175,24 @@ class SpeechHandler{
                 // add/delete parameters in the callback function in chessgame.js if some data needs to be sent back
                 callback([1,result.text]);
             }
-            else if(this.checkRepeatOppMove(result.text)){
-                callback([4, result.text]);
-            }
             else if(this.checkMove(result.text)){
                 callback([2,result.text]);
             }
             else if(this.checkIfSquare(result.text)[0]){
                 console.log(this.checkIfSquare(result.text)[1])
                 callback([3,this.checkIfSquare(result.text)[1]])
+            }
+            else if(this.checkRepeatOppMove(result.text)){
+                callback([4, result.text]);
+            }
+            else if(this.checkResign(result.text)){
+                callback([5, result.text])
+            }
+            else if(this.findPiece(result.text)){
+                callback([6, result.text])
+            }
+            else if(this.checkConfirm(result.text)){
+                callback([7, result.text])
             }
             else{
                 callback([-2,result.text]);
