@@ -124,7 +124,7 @@ class SpeechHandler{
 
     static denyResign(text){
         text = text.toLowerCase()
-        if(text.search('deny') != -1)
+        if(text.search('stop') != -1)
             return true
         else
             return false

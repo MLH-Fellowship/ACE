@@ -23,7 +23,7 @@ const JoinGame = (props) => {
         <header className='navbar'>
             <div className='navbar__title navbar__item'>ACE</div>
             <div className='navbar__item'><a href="/">Exit Game</a></div>  
-            <div className='navbar__item'><i class="fab fa-github"></i><a href="https://google.com"> Visit Github</a></div>     
+            <div className='navbar__item'><i class="fab fa-github"></i><a target="_blank" href="https://github.com/MLH-Fellowship/ACE">Visit Github</a></div>
         </header>
     )
 }
