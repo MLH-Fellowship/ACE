@@ -119,6 +119,14 @@ class SpeechHandler{
             return false
     }
 
+    static denyResign(text){
+        text = text.toLowerCase()
+        if(text.search('deny') != -1)
+            return true
+        else
+            return false
+    }
+
     static checkIfSquare(text){
         text = text.toLowerCase()
 
@@ -193,6 +201,9 @@ class SpeechHandler{
             }
             else if(this.checkConfirm(result.text)){
                 callback([7, result.text])
+            }
+            else if(this.denyResign(result.text)){
+                callback([8, result.text])
             }
             else{
                 callback([-2,result.text]);
