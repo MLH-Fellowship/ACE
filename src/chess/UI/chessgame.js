@@ -478,12 +478,19 @@ class ChessGame extends React.Component {
     }
 
     resignGame=()=>{
-        SpeechHandler.speakThis("Please say Confirm to confirm resignation")
+        SpeechHandler.speakThis("Please say Confirm to confirm or Deny to cancel resignation")
         SpeechHandler.hearThis((commandcode)=>{
             if(commandcode[0] == 7){
                 SpeechHandler.speakThis("You have resigned the game.")
                 socket.emit('resign',{gameId:this.props.gameId,playerColor:this.props.color})
             }
+            else if(commandcode[0] == 8){
+                SpeechHandler.speakThis("Okay, cancelling.")
+            }
+            else{
+                this.resignGame()
+            }
+
         })
         //computer resigns the game and pops up for restart/new game
         
