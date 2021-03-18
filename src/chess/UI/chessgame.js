@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom'
 import { ColorContext } from '../../context/colorcontext' 
 import SpeechHandler from '../../services/speech';
 import Waiting from '../assets/waiting.png'
+import { waitFor } from '@testing-library/dom';
 const socket  = require('../../services/socket').socket
 
 
@@ -376,29 +377,39 @@ class ChessGame extends React.Component {
         let sq = ""
         // Ask user for square
         SpeechHandler.speakThis("Which square would you like to check?")
-        SpeechHandler.hearThis((commandcode)=>{
+        await SpeechHandler.hearThis((commandcode)=>{
             console.log("Receiving callback in find piece")
             console.log(commandcode);
             if(commandcode[0] == 3){
                 sq = commandcode[1]
             }
+            else if(commandcode[0] == -1 || commandcode[0] == -2){
+                SpeechHandler.speakThis("Did not get that, please repeat the square.")
+                this.findChessPiece()
+            }
+            else if(commandcode[0] == 8){
+                SpeechHandler.speakThis("Okay. Cancelling.")
+            }
             let cords = this.getBoardCoordinates(sq)
             const currentGame = this.state.gameState
-
+            let end = ""
             console.log("Piece on this square: " + this.state.gameState.chessBoard[cords[0]][cords[1]].pieceOnThisSquare)
 
             
             if(this.state.gameState.chessBoard[cords[0]][cords[1]].pieceOnThisSquare!==null){
                 const selectedId = currentGame.chessBoard[cords[0]][cords[1]].pieceOnThisSquare.color + " " + currentGame.chessBoard[cords[0]][cords[1]].pieceOnThisSquare.name
-                SpeechHandler.speakThis(selectedId)
+                //SpeechHandler.speakThis(selectedId)
+                end = selectedId
             }
             else
-                SpeechHandler.speakThis("No piece")
+               // SpeechHandler.speakThis("No piece")
+               end = "No piece"
 
             
-            SpeechHandler.speakThis(" found on ")
-            SpeechHandler.speakThis(sq)
+            SpeechHandler.speakThis(end + "found on " + sq)
+            //SpeechHandler.speakThis(sq)
         })
+
     }
 
     getBoardCoordinates(square){
@@ -414,6 +425,39 @@ class ChessGame extends React.Component {
         return [rank, file]
     }
 
+    getFrom=(cb)=>{
+        console.log("im receieving callback",cb)
+        SpeechHandler.speakThis("Which Square do you want to move from?")
+        SpeechHandler.hearThis((commandcode)=>{
+            if(commandcode[0]==3){
+                let from = commandcode[1]
+                cb(from)
+            }
+            else if(commandcode[0]==-1 || commandcode[0]==-2){
+                this.getFrom(cb)
+            }
+        })
+    }
+
+    getTo=(cb)=>{
+        SpeechHandler.speakThis("Which Square do you want to move to?")
+
+        SpeechHandler.hearThis((commandcode)=>{
+            //This is the callback function that gets fired once the recognition stops and recognises the speech
+            // Add logic here to perform different tasks
+            console.log("receiving callback in make move to")
+            console.log(commandcode);
+            //example logic:
+            if(commandcode[0]==3){
+                let to = commandcode[1]
+                cb(to)
+            }
+            else if(commandcode[0]==-1 || commandcode[0]==-2){
+                this.getTo(cb)
+            }
+        })
+    }
+
     makeMoveUsingVoice=async ()=>{
         //make move command implementation, pass arguments to function if required
         //peice should move on board
@@ -422,30 +466,14 @@ class ChessGame extends React.Component {
             let from=""
             let to=""
 
-            SpeechHandler.speakThis("Which Square do you want to move from?")
-            
-            SpeechHandler.hearThis((commandcode)=>{
-                //This is the callback function that gets fired once the recognition stops and recognises the speech
-                // Add logic here to perform different tasks
-                console.log("receiving callback in make move from")
-                console.log(commandcode);
-                //example logic:
-                if(commandcode[0]==3){
-                    from = commandcode[1]
-                }
-
-                SpeechHandler.speakThis("Which Square do you want to move to?")
-
-                SpeechHandler.hearThis((commandcode)=>{
-                    //This is the callback function that gets fired once the recognition stops and recognises the speech
-                    // Add logic here to perform different tasks
-                    console.log("receiving callback in make move to")
-                    console.log(commandcode);
-                    //example logic:
-                    if(commandcode[0]==3){
-                        to = commandcode[1]
-                    }
-                    SpeechHandler.speakThis("Please confirm that you want to move piece from " + from + "to " + to)
+            this.getFrom((fromRec)=>{
+                console.log("from received",fromRec)
+                from=fromRec;
+                this.getTo(async (toRec)=>{
+                    console.log("from received",toRec)
+                    to=toRec
+                    await SpeechHandler.speakThis("Please confirm that you want to move piece from " + from + "to " + to)
+                    
                     SpeechHandler.hearThis((commandcode)=>{
                         if(commandcode[0] == 7){
                             let from_coords = this.getBoardCoordinates(from)
@@ -456,6 +484,8 @@ class ChessGame extends React.Component {
                             const finalPosition = currentBoard[to_coords[0]][to_coords[1]].getCanvasCoord()
                             const selectedId = currentGame.chessBoard[from_coords[0]][from_coords[1]].pieceOnThisSquare.id
                             this.movePiece(selectedId, finalPosition, currentGame, true, from, to)
+                        }else{
+                            console.log("not confirmed")
                         }
                     })
                 })
@@ -465,7 +495,6 @@ class ChessGame extends React.Component {
             SpeechHandler.speakThis("Not your move.")
         }
     }
-    
 
     repeatOpponentMove=()=>{
         //computer repeats oponents last move
@@ -479,7 +508,7 @@ class ChessGame extends React.Component {
     }
 
     resignGame=()=>{
-        SpeechHandler.speakThis("Please say Confirm to confirm or Deny to cancel resignation")
+        SpeechHandler.speakThis("Please say Confirm to confirm or stop to cancel resignation")
         SpeechHandler.hearThis((commandcode)=>{
             if(commandcode[0] == 7){
                 SpeechHandler.speakThis("You have resigned the game.")

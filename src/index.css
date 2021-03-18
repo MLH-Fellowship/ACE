@@ -51,6 +51,8 @@ code {
 .onboard{
   background-color: #edeef7;
   background-image: url('./chess/assets/Fade-In-Background.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .navbar {
@@ -119,6 +121,8 @@ p .key:hover{
 .outer{
   padding:5px;
   background-image: url('./chess/assets/Fade-In-Background.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .hide{opacity:0;}
@@ -143,6 +147,8 @@ input{
 .inviteScreen{
   background-image: url('./chess/assets/Fade-In-Background.svg');
   height: 90vh;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .inviteScreen h1{
