@@ -383,11 +383,17 @@ class ChessGame extends React.Component {
             }
             let cords = this.getBoardCoordinates(sq)
             const currentGame = this.state.gameState
-            const selectedId = currentGame.chessBoard[cords[0]][cords[1]].pieceOnThisSquare.color + " " + currentGame.chessBoard[cords[0]][cords[1]].pieceOnThisSquare.name
-            if(this.state.gameState.chessBoard[cords[0]][cords[1]].pieceOnThisSquare!==null)
+
+            console.log("Piece on this square: " + this.state.gameState.chessBoard[cords[0]][cords[1]].pieceOnThisSquare)
+
+            
+            if(this.state.gameState.chessBoard[cords[0]][cords[1]].pieceOnThisSquare!==null){
+                const selectedId = currentGame.chessBoard[cords[0]][cords[1]].pieceOnThisSquare.color + " " + currentGame.chessBoard[cords[0]][cords[1]].pieceOnThisSquare.name
                 SpeechHandler.speakThis(selectedId)
+            }
             else
                 SpeechHandler.speakThis("No piece")
+
             
             SpeechHandler.speakThis(" found on ")
             SpeechHandler.speakThis(sq)
