@@ -19,10 +19,13 @@ const JoinGameRoom = (gameid, isCreator) => {
 const JoinGame = (props) => {
     const { gameid } = useParams()
     JoinGameRoom(gameid, props.isCreator)
-    return <div>
-        <h1 style = {{textAlign: "center"}}>Welcome to ACE!</h1>
-        <h3 style = {{textAlign: "center"}}>Your accesible chess experience</h3>
-    </div>
+    return(
+        <header className='navbar'>
+            <div className='navbar__title navbar__item'>ACE</div>
+            <div className='navbar__item'>Exit Game</div>  
+            <div className='navbar__item'><i class="fab fa-github"></i> Visit Github</div>     
+        </header>
+    )
 }
 
 export default JoinGame
