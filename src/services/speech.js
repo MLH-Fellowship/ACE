@@ -89,7 +89,7 @@ class SpeechHandler{
 
     static checkRepeatOppMove(text){
         text = text.toLowerCase()
-        if(text.search('repeat')!=-1 && text.search('opponent')!=-1 && text.search('move')!=-1)
+        if(text.search('repeat')!=-1) //&& text.search('opponent')!=-1 && text.search('move')!=-1)
             return true
         else
             return false

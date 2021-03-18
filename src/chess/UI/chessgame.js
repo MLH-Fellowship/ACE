@@ -383,20 +383,22 @@ class ChessGame extends React.Component {
             }
             let cords = this.getBoardCoordinates(sq)
             const currentGame = this.state.gameState
-
+            let end = ""
             console.log("Piece on this square: " + this.state.gameState.chessBoard[cords[0]][cords[1]].pieceOnThisSquare)
 
             
             if(this.state.gameState.chessBoard[cords[0]][cords[1]].pieceOnThisSquare!==null){
                 const selectedId = currentGame.chessBoard[cords[0]][cords[1]].pieceOnThisSquare.color + " " + currentGame.chessBoard[cords[0]][cords[1]].pieceOnThisSquare.name
-                SpeechHandler.speakThis(selectedId)
+                //SpeechHandler.speakThis(selectedId)
+                end = selectedId
             }
             else
-                SpeechHandler.speakThis("No piece")
+               // SpeechHandler.speakThis("No piece")
+               end = "No piece"
 
             
-            SpeechHandler.speakThis(" found on ")
-            SpeechHandler.speakThis(sq)
+            SpeechHandler.speakThis(end + "found on " + sq)
+            //SpeechHandler.speakThis(sq)
         })
     }
 
@@ -427,10 +429,14 @@ class ChessGame extends React.Component {
                 //This is the callback function that gets fired once the recognition stops and recognises the speech
                 // Add logic here to perform different tasks
                 console.log("receiving callback in make move from")
-                console.log(commandcode);
+                console.log(commandcode)
                 //example logic:
                 if(commandcode[0]==3){
                     from = commandcode[1]
+                }
+                else{
+                    SpeechHandler.speakThis("Sorry, not a valid square. Please try again.")
+                    this.makeMoveUsingVoice()
                 }
 
                 SpeechHandler.speakThis("Which Square do you want to move to?")
@@ -444,7 +450,7 @@ class ChessGame extends React.Component {
                     if(commandcode[0]==3){
                         to = commandcode[1]
                     }
-                    SpeechHandler.speakThis("Please confirm that you want to move piece from " + from + "to " + to)
+                    SpeechHandler.speakThis("Please say confirm to confirm that you want to move piece from " + from + "to " + to)
                     SpeechHandler.hearThis((commandcode)=>{
                         if(commandcode[0] == 7){
                             let from_coords = this.getBoardCoordinates(from)
