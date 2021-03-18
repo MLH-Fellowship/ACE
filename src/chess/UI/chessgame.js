@@ -10,6 +10,7 @@ import chessMove from '../assets/moveSoundEffect.mp3'
 import { useParams } from 'react-router-dom'
 import { ColorContext } from '../../context/colorcontext' 
 import SpeechHandler from '../../services/speech';
+import Waiting from '../assets/waiting.png'
 const socket  = require('../../services/socket').socket
 
 
@@ -579,7 +580,12 @@ const ChessGameWrapper = (props) => {
     const [opponentDidJoinTheGame, didJoinGame] = React.useState(false)
     const [gameSessionDoesNotExist, doesntExist] = React.useState(false)
 
+    const initialize= async ()=>{
+        await SpeechHandler.initializeTextToSpeech();
+    }
+
     React.useEffect(() => {
+        initialize();
         socket.on("playerJoinedRoom", statusUpdate => {
             console.log("A new player has joined the room! , Game id: " + statusUpdate.gameId + " Socket id: " + statusUpdate.mySocketId)
             if (socket.id !== statusUpdate.mySocketId) {
@@ -625,6 +631,7 @@ const ChessGameWrapper = (props) => {
             helperInput.select()
             document.execCommand('copy')
             document.body.removeChild(helperInput)
+            SpeechHandler.speakThis("Game code has been copied on your clipboard! Press enter if you want to copy it again")
             
             // We remove the "copied" message after 2 seconds.
             setTimeout( () => {
@@ -632,10 +639,20 @@ const ChessGameWrapper = (props) => {
             }, 2000)
             
         })
+        document.addEventListener("keydown", copyCode);
+        key.click();
+       
+
     
         
     }, [])
 
+    const copyCode = (e) =>{
+        if(e.keyCode == 13){
+            const key = document.querySelector('.key')
+            key.click()
+        }
+    }
 
 
     return (
@@ -662,11 +679,11 @@ const ChessGameWrapper = (props) => {
             <h1 style={{ textAlign: "center", marginTop: "200px" }}> :( </h1>
           </div>
         ) : (
-          <div>
+          <div className="inviteScreen" id="invite">
+            <div style={{height:"10vh"}}></div>
             <h1
               style={{
                 textAlign: "center",
-                marginTop: String(window.innerHeight / 8) + "px",
                 marginBottom:"40px"
               }}
             >
@@ -683,7 +700,10 @@ const ChessGameWrapper = (props) => {
                     </span>
                 </p>
               <br/>
-            <h1 style={{ textAlign: "center", marginTop: "100px" }}>
+              <div style={{textAlign:"center"}}>
+            <img src={Waiting} height="200px" width="200px"/>
+            </div>
+            <h1 style={{ textAlign: "center", marginTop: "10px" }}>
               {" "}
               Waiting for other opponent to join the game...{" "}
             </h1>

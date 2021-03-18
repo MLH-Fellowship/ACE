@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router-dom'
 const socket  = require('../services/socket').socket
 
 /**
@@ -22,8 +22,8 @@ const JoinGame = (props) => {
     return(
         <header className='navbar'>
             <div className='navbar__title navbar__item'>ACE</div>
-            <div className='navbar__item'>Exit Game</div>  
-            <div className='navbar__item'><i class="fab fa-github"></i> Visit Github</div>     
+            <div className='navbar__item'><a href="/">Exit Game</a></div>  
+            <div className='navbar__item'><i class="fab fa-github"></i><a href="https://google.com"> Visit Github</a></div>     
         </header>
     )
 }
