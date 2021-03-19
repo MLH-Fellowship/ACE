@@ -62,11 +62,11 @@ class CreateNewGame extends React.Component {
             <div id="onboard" className="onboard" style={{height:'100vh',display:'flex',justifyContent:'center'}}>
             <div style={{width:"50%",height:'100vh',display:'flex',flexDirection:'column',justifyContent:'center',fontSize:'22px'}}>
                 <div style={{textAlign:'center'}}>
-                <h1 style={{margin:0}}>ACE</h1>
+                <h1 style={{margin:0,fontSize:"70px"}}>ACE</h1>
                 <p style={{margin:0}}>Your accessible chess experience</p>
                 </div>
                 <div style={{textAlign:'center'}}>
-                    <img src={ACE} height="300px" width="300px"></img>
+                    <img src={ACE} height="450px" width="450px"></img>
                     </div>
                         <div style={{textAlign:'center'}}>
                             <button id="startGame" className="btn btn-primary"  
@@ -76,7 +76,7 @@ class CreateNewGame extends React.Component {
                                         didGameStart: true
                                     })
                                     this.send()
-                                }}>Start Game
+                                }}><p style={{fontSize:"18px"}}>Start Game</p>
                             </button>
                         </div>
                     </div>
