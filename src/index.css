@@ -50,6 +50,7 @@ code {
 
 .onboard{
   background-color: #edeef7;
+  padding: 20px;
   color:white;
   background-image: url('./chess/assets/Fade-In-Background.svg');
   background-repeat: no-repeat;
