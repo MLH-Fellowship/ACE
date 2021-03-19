@@ -1,73 +1,68 @@
-# Getting Started with Create React App
+# ACE - Accessible Chess Experience
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**ACE** (Accessible Chess Experience) is a real time voice powered chess application which 
+lets you play online with your friends. The game has features like moving pieces, finding pieces on board, getting board summary, repeating opponent moves, and much more, all implemented using voice commands.
 
-## Link to backend
-[Backend Link](https://github.com/suhanichawla/ACE-Backend)
+## Inspiration
+We looked online and found out that two of the most popular chess websites, lichess and chess.com, have no voice options for the visually impaired. We wanted to create something, that can help those who are visually impaired to have a complete experience without the hassle on relying on screen readers for every single move. And thus originated the idea of voice powered chess, ACE. 
 
-## Available Scripts
+## Features
+1. Play chess online with your friends using voice commands
 
-In the project directory, you can run:
+2. Move chess piece using voice 
 
-### `yarn start`
+3. Find piece on a particular square 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+4. Get chessboard summary
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+5. Get voice alerts for invalid moves, check and checkmate situations
 
-### `yarn test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Tech Stack
+1. Frontend - ReactJS
+2. Backend - NodeJS
+3. Speech-To-Text - Azure Speech SDK
+4. Real Time Communications - Web Sockets
 
-### `yarn build`
+## Try It Yourself
+Here is a link to the [website](https://ace-chess.herokuapp.com)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Dev Setup
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Prerequisites
+- NodeJS
+- npm
+- Azure account and Azure Speech Resource
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Start the server 
+[Link to backend repository](https://github.com/suhanichawla/ACE-Backend)
 
-### `yarn eject`
+1. Clone the above repository
+2. cd into the ACE-Backend folder
+3. Create a .env file and add the SPEECH_KEY and SPEECH_REIGON from your azure speech service credenials. (Refer to .env.example file)
+3. Go to the terminal and run the following commands
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```
+npm install
+node app.js
+```
+The server will be started at localhost:8000
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Start the client
+1. Clone this repository
+2. cd into the ACE folder
+3. Open the config.js file in src/services folder
+4. Replace CLIENT_URL with http://localhost:3000
+5. Replace SERVER_URL with http://localhost:8000
+3. Go to the terminal and run the following commands
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```
+npm install
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+npm start
+```
+Visit localhost:3000 to play the game
 
-## Learn More
+## Screenshots
+![image](https://user-images.githubusercontent.com/44273715/111841275-bb0d3e00-8923-11eb-8017-9d6b16800051.png)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
