@@ -1,7 +1,7 @@
 # ACE - Accessible Chess Experience
 
 This project aims to build a speech activation driven chess game, specifically geared towards the blind.  
-The deployed version can be accessed at: https://ace-chess.herokuapp.com/  
+The deployed version can be found    at: https://ace-chess.herokuapp.com/  
 
 ## Tech Stack
 Front-end : React.js  
@@ -23,13 +23,14 @@ To clone:
 First, install React (create-react-app) and Node.js (https://nodejs.org/en/download/), and the npm package manager (https://www.npmjs.com/get-npm).  
 After the repositories are cloned onto your local machine, first cd into the ACE repository.  
 `cd /path_to_repo/ACE`  
+  
 After you have entered the repository through your terminal, run the following to install all dependencies:  
 `npm install`  
   
 Next, cd into the ACE-backend repository.  
-`cd /path_to_backend_repo/ACE-backend`  
+  `cd /path_to_backend_repo/ACE-backend`  
 After you have entered the repository through your terminal, run the following again:  
-`npm install`  
+  `npm install`  
 
 ## Running the app locally
 To run the app, we must have two terminals open simultaneously; one in ACE and the other ACE-backend.  
