@@ -158,26 +158,54 @@ class ChessGame extends React.Component {
         
         if (update === "moved in the same position.") {
             this.revertToPreviousState(selectedId) // pass in selected ID to identify the piece that messed up
+            SpeechHandler.speakThis("Moved in Same position. Make your move again.")
             return
         } else if (update === "user tried to capture their own piece") {
             this.revertToPreviousState(selectedId) 
+            SpeechHandler.speakThis("Tried to capture your own piece. Make your move again.")
             return
         } else if (update === "b is in check" || update === "w is in check") { 
             // change the fill of the enemy king or your king based on which side is in check. 
             // play a sound or something
+            
             if (update[0] === "b") {
+                if(this.props.color){
+                    SpeechHandler.speakThis("Heads up: Enemy king is in check.")
+                }
+                else{
+                    SpeechHandler.speakThis("Heads up: Your king is in check.")
+                }
                 blackKingInCheck = true
             } else {
+                if(!this.props.color){
+                    SpeechHandler.speakThis("Heads up: Enemy king is in check.")
+                }
+                else{
+                    SpeechHandler.speakThis("Heads up: Your king is in check.")
+                }
                 whiteKingInCheck = true
             }
         } else if (update === "b has been checkmated" || update === "w has been checkmated") { 
             if (update[0] === "b") {
+                if(this.props.color){
+                    SpeechHandler.speakThis("Black has been checkmated. You have won the game.")
+                }
+                else{
+                    SpeechHandler.speakThis("You have been checkmated. You have lost the game.")
+                }
                 blackCheckmated = true
             } else {
+                if(!this.props.color){
+                    SpeechHandler.speakThis("White has been checkmated. You have won the game.")
+                }
+                else{
+                    SpeechHandler.speakThis("You have been checkmated. You have lost the game.")
+                }
                 whiteCheckmated = true
             }
         } else if (update === "invalid move") {
             this.revertToPreviousState(selectedId) 
+            SpeechHandler.speakThis("Invalid Move. Please try again.")
             return
         } 
 
@@ -384,7 +412,7 @@ class ChessGame extends React.Component {
                 sq = commandcode[1]
             }
             else if(commandcode[0] == -1 || commandcode[0] == -2){
-                SpeechHandler.speakThis("Did not get that, please repeat the square.")
+                SpeechHandler.speakThis("Did not get that.")
                 this.findChessPiece()
             }
             else if(commandcode[0] == 8){
