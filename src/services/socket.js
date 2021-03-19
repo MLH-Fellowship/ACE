@@ -1,6 +1,7 @@
 import io from 'socket.io-client'
+import {SERVER_URL} from './config'
 
-const URL = 'http://localhost:8000/' 
+const URL = SERVER_URL 
 
 const socket = io(URL)
 

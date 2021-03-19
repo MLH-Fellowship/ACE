@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom'
 import { ColorContext } from '../../context/colorcontext' 
 import SpeechHandler from '../../services/speech';
 import Waiting from '../assets/waiting.png'
-import { waitFor } from '@testing-library/dom';
+import { CLIENT_URL } from '../../services/config';
 const socket  = require('../../services/socket').socket
 
 
@@ -623,7 +623,7 @@ class ChessGame extends React.Component {
 
 const ChessGameWrapper = (props) => {
     // get the gameId from the URL here and pass it to the chessGame component as a prop. 
-    const domainName = 'http://localhost:3000'
+    const domainName = CLIENT_URL
     const color = React.useContext(ColorContext)
     const { gameid } = useParams()
     const [play] = useSound(chessMove);
