@@ -50,6 +50,7 @@ code {
 
 .onboard{
   background-color: #edeef7;
+  color:white;
   background-image: url('./chess/assets/Fade-In-Background.svg');
   background-repeat: no-repeat;
   background-size: cover;
@@ -123,6 +124,7 @@ p .key:hover{
   background-image: url('./chess/assets/Fade-In-Background.svg');
   background-repeat: no-repeat;
   background-size: cover;
+  color:white;
 }
 
 .hide{opacity:0;}
@@ -149,6 +151,7 @@ input{
   height: 90vh;
   background-repeat: no-repeat;
   background-size: cover;
+  color:white;
 }
 
 .inviteScreen h1{
