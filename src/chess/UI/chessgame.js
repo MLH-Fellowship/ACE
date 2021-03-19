@@ -2,7 +2,8 @@ import React from 'react'
 import Game from '../model/chess'
 import Square from '../model/square'
 import { Stage, Layer } from 'react-konva';
-import Board from '../assets/chessBoard.png'
+import Boardw from '../assets/chessBoardw.png'
+import Boardb from '../assets/chessBoardb.png'
 import Piece from './piece'
 import piecemap from './piecemap'
 import useSound from 'use-sound'
@@ -20,6 +21,13 @@ class ChessGame extends React.Component {
     constructor(props)
     {
         super(props);
+
+        let boardUrl = "" 
+        if(this.props.color)
+            boardUrl=Boardw
+        else
+            boardUrl=Boardb
+
         this.state = {
             gameState: new Game(this.props.color),
             draggedPieceTargetId: "", // empty string means no piece is being dragged
@@ -27,7 +35,8 @@ class ChessGame extends React.Component {
             whiteKingInCheck: false, 
             blackKingInCheck: false,
             isPressed: false,
-            latestOpponentMove: null
+            latestOpponentMove: null,
+            boardUrl: boardUrl
         }
         this.speakPositions = this.speakPositions.bind(this)
     }
@@ -113,6 +122,7 @@ class ChessGame extends React.Component {
                     playerTurnToMoveIsWhite: !move.playerColorThatJustMovedIsWhite,
                     latestOpponentMove: final_move
                 })
+                this.repeatOpponentMove()
             }
         })
 
@@ -570,7 +580,7 @@ class ChessGame extends React.Component {
         <React.Fragment>
              <div  className="chessDiv">
         <div style = {{
-            backgroundImage: `url(${Board})`,
+            backgroundImage: `url(${this.state.boardUrl})`,
             width: "720px",
             height: "720px"}}
         >
