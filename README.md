@@ -8,10 +8,10 @@ The deployed version can be accessed at: https://ace-chess.herokuapp.com/
 The first step is to clone both the frontent repository at https://github.com/MLH-Fellowship/ACE and the backend repository at https://github.com/suhanichawla/ACE-Backend
   
 To clone:  
-`
-git clone https://github.com/MLH-Fellowship/ACE.git  
-git clone https://github.com/suhanichawla/ACE-Backend.git  
-`
+
+`git clone https://github.com/MLH-Fellowship/ACE.git`  
+`git clone https://github.com/suhanichawla/ACE-Backend.git`  
+
   
 First, install React (create-react-app) and Node.js (https://nodejs.org/en/download/), and pm (https://www.npmjs.com/get-npm).  
 After the repositories are cloned onto your local machine, first cd into the ACE repository.  
