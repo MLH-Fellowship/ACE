@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ACE - Accessible Chess Experience
 
 **ACE** (Accessible Chess Experience) is a real time voice powered chess application which 
@@ -65,4 +66,6 @@ Visit localhost:3000 to play the game
 
 ## Screenshots
 ![image](https://user-images.githubusercontent.com/44273715/111841275-bb0d3e00-8923-11eb-8017-9d6b16800051.png)
+
+
 
