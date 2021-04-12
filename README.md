@@ -27,6 +27,11 @@ We looked online and found out that two of the most popular chess websites, lich
 ## Try It Yourself
 Here is a link to the [website](https://ace-chess.herokuapp.com)
 
+## Contributing to ACE
+1. ACE uses Azure text to speech API for speech recognition. The project requires a speech resource on Azure portal (to get access to SPEECH_KEY and SPEECH_REGION). However if you are interested in contributing to the project but unable to make an azure speech resource, we will share azure credentials to get you started on contrinuting to this project. You can join our [discord server](https://discord.gg/EmtXC9xug6) to get access to azure speech key and region.
+
+2. All issues for this project are created here on this frontend repository, however you can make changes to backend as well and submit PR on backend repository as well.
+
 ## Dev Setup
 
 ### Prerequisites
@@ -39,7 +44,7 @@ Here is a link to the [website](https://ace-chess.herokuapp.com)
 
 1. Clone the above repository
 2. cd into the ACE-Backend folder
-3. Create a .env file and add the SPEECH_KEY and SPEECH_REIGON from your azure speech service credenials. (Refer to .env.example file)
+3. Create a .env file and add the SPEECH_KEY and SPEECH_REGION from your azure speech service credenials. (Refer to .env.example file)
 3. Go to the terminal and run the following commands
 
 ```
