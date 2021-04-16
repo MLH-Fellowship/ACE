@@ -72,6 +72,12 @@ class SpeechHandler{
 
            
         }   
+        return(false)
+    }
+
+    static async stopSpeakingPositions(){
+        console.log("stopSpeaking called")
+        synth.cancel()
     }
 
     static checkSpeakPosition(text){

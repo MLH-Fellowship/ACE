@@ -38,7 +38,8 @@ class ChessGame extends React.Component {
             isPressed: false,
             latestOpponentMove: null,
             boardUrl: boardUrl,
-            isListening: false
+            isListening: false,
+            isSpeakingPositions: false
         }
         this.speakPositions = this.speakPositions.bind(this)
     }
@@ -94,6 +95,12 @@ class ChessGame extends React.Component {
                     }
                 })
                 
+            }
+            // when esc is pressed, stop speaking positions
+            else if(e.keyCode == 27 && this.state.isSpeakingPositions){
+                console.log("esc key detected")
+                SpeechHandler.stopSpeakingPositions()
+                this.setState({isSpeakingPositions: false})
             }
       } 
     }
@@ -407,7 +414,10 @@ class ChessGame extends React.Component {
             }
         }
 
-        SpeechHandler.speakThis(position_to_speak)
+        this.setState({isSpeakingPositions: true}) //toggle on isSpeaking
+
+        SpeechHandler.speakThis(position_to_speak) 
+
         console.log("trigger speak position")
         console.log(position_to_speak)
     }
