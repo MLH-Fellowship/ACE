@@ -12,6 +12,7 @@ import { useParams } from 'react-router-dom'
 import { ColorContext } from '../../context/colorcontext' 
 import SpeechHandler from '../../services/speech';
 import Waiting from '../assets/waiting.png'
+import Microphone from '../Microphone';
 import { CLIENT_URL } from '../../services/config';
 const socket  = require('../../services/socket').socket
 
@@ -36,7 +37,9 @@ class ChessGame extends React.Component {
             blackKingInCheck: false,
             isPressed: false,
             latestOpponentMove: null,
-            boardUrl: boardUrl
+            boardUrl: boardUrl,
+            isListening: false,
+            isSpeakingPositions: false
         }
         this.speakPositions = this.speakPositions.bind(this)
     }
@@ -57,11 +60,14 @@ class ChessGame extends React.Component {
                 this.setState({
                     isPressed:true
                 })
+                this.setState({isListening: true}) //show the microphone
                 SpeechHandler.hearThis((commandcode)=>{
+                    this.setState({isListening: false}) //hide the microphone
                     //This is the callback function that gets fired once the recognition stops and recognises the speech
                     // Add logic here to perform different tasks
                     console.log("receiving callback")
-                    console.log(commandcode);
+                    console.log(commandcode);                    
+
                     //example logic:
                     if(commandcode[0]==1){
                         this.speakPositions()
@@ -89,6 +95,12 @@ class ChessGame extends React.Component {
                     }
                 })
                 
+            }
+            // when esc is pressed, stop speaking positions
+            else if(e.keyCode == 27 && this.state.isSpeakingPositions){
+                console.log("esc key detected")
+                SpeechHandler.stopSpeakingPositions()
+                this.setState({isSpeakingPositions: false})
             }
       } 
     }
@@ -402,7 +414,10 @@ class ChessGame extends React.Component {
             }
         }
 
-        SpeechHandler.speakThis(position_to_speak)
+        this.setState({isSpeakingPositions: true}) //toggle on isSpeaking
+
+        SpeechHandler.speakThis(position_to_speak) 
+
         console.log("trigger speak position")
         console.log(position_to_speak)
     }
@@ -415,9 +430,11 @@ class ChessGame extends React.Component {
         let sq = ""
         // Ask user for square
         SpeechHandler.speakThis("Which square would you like to check?")
+        this.setState({isListening: true}) //display microphone
         await SpeechHandler.hearThis((commandcode)=>{
             console.log("Receiving callback in find piece")
             console.log(commandcode);
+            this.setState({isListening: false}) //hide microphone
             if(commandcode[0] == 3){
                 sq = commandcode[1]
             }
@@ -466,7 +483,9 @@ class ChessGame extends React.Component {
     getFrom=(cb)=>{
         console.log("im receieving callback",cb)
         SpeechHandler.speakThis("Which Square do you want to move from?")
+        this.setState({isListening: true}) //display microphone
         SpeechHandler.hearThis((commandcode)=>{
+            this.setState({isListening: false}) //hide microphone
             if(commandcode[0]==3){
                 let from = commandcode[1]
                 cb(from)
@@ -479,8 +498,9 @@ class ChessGame extends React.Component {
 
     getTo=(cb)=>{
         SpeechHandler.speakThis("Which Square do you want to move to?")
-
+        this.setState({isListening: true}) //display microphone
         SpeechHandler.hearThis((commandcode)=>{
+            this.setState({isListening: false}) //hide microphone
             //This is the callback function that gets fired once the recognition stops and recognises the speech
             // Add logic here to perform different tasks
             console.log("receiving callback in make move to")
@@ -512,7 +532,10 @@ class ChessGame extends React.Component {
                     to=toRec
                     await SpeechHandler.speakThis("Please confirm that you want to move piece from " + from + "to " + to)
                     
+                    this.setState({isListening: true}) //display microphone
+
                     SpeechHandler.hearThis((commandcode)=>{
+                        this.setState({isListening: false}) //hide microphone
                         if(commandcode[0] == 7){
                             let from_coords = this.getBoardCoordinates(from)
                             let to_coords = this.getBoardCoordinates(to)
@@ -547,7 +570,10 @@ class ChessGame extends React.Component {
 
     resignGame=()=>{
         SpeechHandler.speakThis("Please say Confirm to confirm or stop to cancel resignation")
+        
+        this.setState({isListening: true}) //display microphone
         SpeechHandler.hearThis((commandcode)=>{
+            this.setState({isListening: false}) //hide microphone
             if(commandcode[0] == 7){
                 SpeechHandler.speakThis("You have resigned the game.")
                 socket.emit('resign',{gameId:this.props.gameId,playerColor:this.props.color})
@@ -624,6 +650,8 @@ class ChessGame extends React.Component {
                 <button className="btn btn-primary" onClick={()=>this.repeatOpponentMove()}>Repeat oponent move</button>
                 <br/>
                 <button className="btn btn-primary" onClick={()=>this.resignGame()}>Resign the game</button>
+                <br/>
+                <Microphone isVisible = {this.state.isListening} />
                 <br/>
             </div>
         </React.Fragment>)
